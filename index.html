@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Causality for Digital Twins</title>
+<link rel="stylesheet" href="vendor/reveal/dist/reset.css">
+<link rel="stylesheet" href="vendor/reveal/dist/reveal.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/sirris.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<section class="hero" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="fade">
+<div class="wrap">
+  <h1>Causality for Digital Twins</h1>
+  <div class="sub">From correlation to “what if?”, with results on industrial time series</div>
+  <div class="who">Gian Marco Paldino</div>
+  <div class="meta">Sirris &nbsp;·&nbsp; 19 November 2026<br>Machine Learning Group, Université Libre de Bruxelles</div>
+</div>
+<svg class="net" viewBox="0 0 560 600">
+  <line x1="120" y1="110" x2="300" y2="200"/><line x1="440" y1="90" x2="300" y2="200"/>
+  <line class="hot" x1="300" y1="200" x2="250" y2="380"/><line x1="300" y1="200" x2="470" y2="330"/>
+  <line x1="250" y1="380" x2="110" y2="470"/><line class="hot" x1="250" y1="380" x2="400" y2="520"/>
+  <line x1="470" y1="330" x2="400" y2="520"/><line x1="120" y1="110" x2="80" y2="290"/><line x1="80" y1="290" x2="250" y2="380"/>
+  <circle cx="120" cy="110" r="15"/><circle cx="440" cy="90" r="15"/><circle class="hot" cx="300" cy="200" r="16"/>
+  <circle cx="470" cy="330" r="15"/><circle class="hot" cx="250" cy="380" r="16"/><circle cx="110" cy="470" r="15"/>
+  <circle class="hot" cx="400" cy="520" r="16"/><circle cx="80" cy="290" r="15"/>
+</svg>
+<aside class="notes">0:00. One sentence on who I am: postdoc at MLG (ULB), causality and digital twins in the WEL-T project. We already worked together on injection molding: it comes back in the second half.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Digital twins</div><h2>A digital twin has to answer “what if?”</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.95">
+<svg class="dag" viewBox="0 0 520 330" width="520" height="330">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+<path class="e" d="M 120,118 C 150,30 370,30 400,118" marker-end="url(#ah)"/>
+<path class="e hot" data-from="1" d="M 400,212 C 370,300 150,300 120,212" marker-end="url(#ah)"/>
+<text x="260" y="34">measures</text>
+<text x="260" y="296" data-from="1" style="fill:var(--accent)">actions</text>
+<rect class="n" x="20" y="125" width="200" height="80" rx="14"/><text x="120" y="152">🏭</text><text x="120" y="182">Physical twin</text>
+<rect class="n blue" x="300" y="125" width="200" height="80" rx="14"/><text x="400" y="152">💻</text><text x="400" y="182">Digital twin</text>
+</svg></div>
+  <div class="col">
+    <p class="muted" style="margin-bottom:12px">A twin aims to…</p>
+    <div class="verbs">
+      <div class="verb"><b>Emulate</b><span>reproduce what the system does</span><i class="tag blue">prediction</i></div>
+      <div class="verb"><b>Anticipate</b><span>what happens next, if nothing changes</span><i class="tag blue">prediction</i></div>
+      <div class="verb fragment"><b>Explain</b><span>why did this part come out wrong?</span><i class="tag red">causes</i></div>
+      <div class="verb" data-from="1"><b>Control</b><span>open a valve, slow a line, change a set-point</span><i class="tag red">causes</i></div>
+    </div>
+  </div>
+</div>
+<div class="banner fragment">The moment the twin sends an action back, it stops <em>observing</em> the system and starts <em>changing</em> it. Sensor logs only tell us what moves together.</div>
+</div></div>
+<aside class="notes">0:30. The definition is Gianluca's. Emulate and anticipate = prediction. Explain and control = the twin has to know what happens when IT changes something. That is the thread of the whole talk.</aside>
+</section>
+
+<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="fade">
+<div class="wrap">
+  <div class="num">A decision to make</div>
+  <div class="big-q">You run the molding line.<br><em>Which drying time do you set?</em></div>
+  <p class="sub">1000 parts from the production logs. The granulate was dried for 4 hours or for 2 hours. For each part we know whether it passed quality control.</p>
+</div>
+<aside class="notes">2:00. Ask the room, wait for an answer. Do not explain anything yet.</aside>
+</section>
+
+<section class="s top" data-transition="fade">
+<div class="sbody"><div class="fit">
+<div class="chat">
+  <div class="msg me"><div class="bub">Hey Claude, which drying time do I set?</div><div class="av">🏭</div></div>
+  <div class="msg me fragment"><div class="bub">Only look at the data. No hallucinations.</div><div class="av">🏭</div></div>
+  <div class="msg ai fragment"><div class="av">✳</div><div class="bub">
+    <p>Looking only at the data: <b>short drying</b>. More good parts, and it saves two hours and energy on every batch.</p>
+    <div class="mini2">
+      <div class="cell"><span class="p colA" data-count="79" data-suf="%">79%</span><span class="f"><b class="colA">Long drying</b> · 4 h · 395 / 500 good</span><div class="bar a"><i style="--w:79%"></i></div></div>
+      <div class="cell win"><span class="p colB" data-count="85" data-suf="%">85%</span><span class="f"><b class="colB">Short drying</b> · 2 h · 425 / 500 good</span><div class="bar b"><i style="--w:85%"></i></div></div>
+    </div>
+    <p class="tiny muted" style="margin:.5em 0 0 0">Illustrative numbers.</p></div></div>
+  <div class="msg me fragment"><div class="bub">Are you sure?</div><div class="av">🏭</div></div>
+  <div class="msg ai fragment"><div class="av">✳</div><div class="bub">Yes.</div></div>
+  <div class="msg me fragment"><div class="bub">Gemini would have done a better job.</div><div class="av">🏭</div></div>
+  <div class="msg ai fragment"><div class="av">✳</div><div class="bub">
+    <p>…fine. Same parts, split by how the granulate arrived:</p>
+    <div class="simp mini">
+      <div></div><div class="hd colA">Long drying · 4 h</div><div class="hd colB">Short drying · 2 h</div>
+      <div class="rl"><span>Arrived dry</span></div>
+      <div class="cell win"><span class="p" data-count="95" data-suf="%">95%</span><span class="f">95 / 100</span><div class="bar a"><i style="--w:95%"></i></div></div><div class="cell"><span class="p" data-count="90" data-suf="%">90%</span><span class="f">360 / 400</span><div class="bar b"><i style="--w:90%"></i></div></div>
+      <div class="rl"><span>Arrived humid</span></div>
+      <div class="cell win"><span class="p" data-count="75" data-suf="%">75%</span><span class="f">300 / 400</span><div class="bar a"><i style="--w:75%"></i></div></div><div class="cell"><span class="p" data-count="65" data-suf="%">65%</span><span class="f">65 / 100</span><div class="bar b"><i style="--w:65%"></i></div></div>
+      <div class="rl"><span>All parts</span></div>
+      <div class="cell tot"><span class="p">79%</span><span class="f">395 / 500</span><div class="bar a"><i style="--w:79%"></i></div></div><div class="cell tot win"><span class="p">85%</span><span class="f">425 / 500</span><div class="bar b"><i style="--w:85%"></i></div></div>
+    </div></div></div>
+</div>
+</div></div>
+<aside class="notes">2:30. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Nothing is wrong with the data. The question is wrong.</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.85">
+    <svg class="dag " viewBox="0 0 440 300" width="440" height="300"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="200.9" y1="79.0" x2="114.1" y2="211.0" marker-end="url(#ah)" /><line class="e hot" x1="239.1" y1="79.0" x2="325.9" y2="211.0" marker-end="url(#ah)" /><line class="e " x1="180.0" y1="240.0" x2="270.0" y2="240.0" marker-end="url(#ah)" /><rect class="n hot" x="105.0" y="26.0" width="230.0" height="48" rx="12"/><text x="220" y="51">Granulate moisture</text><rect class="n " x="15.0" y="216.0" width="160.0" height="48" rx="12"/><text x="95" y="241">Drying time</text><rect class="n " x="275.0" y="216.0" width="140.0" height="48" rx="12"/><text x="345" y="241">Good part</text></svg>
+    <p class="center small muted" style="margin-top:10px">Moisture drives both the choice of the drying time and the quality: a <b style="color:var(--accent)">confounder</b>.</p>
+  </div>
+  <div class="col">
+    <p><b>Which parts got the long drying?</b> <span class="muted small">(the expensive one)</span></p>
+    <div class="mix"><span class="sm" style="--w:20%">100 dry</span><span class="lg" style="--w:80%">400 from humid granulate</span></div>
+    <p><b>Which parts got the short drying?</b></p>
+    <div class="mix"><span class="sm" style="--w:80%">400 from dry granulate</span><span class="lg" style="--w:20%">100 humid</span></div>
+    <p class="small">Operators dry for longer when the material arrives humid. The short drying mostly got the easy batches.</p>
+  </div>
+</div>
+<div class="two-q fragment" style="margin-top:14px">
+  <div class="card t-blue"><span class="tag blue">Seeing · a monitoring twin</span><p style="margin:.5em 0 0 0">Among the parts dried for 2 hours, how many were good?</p><div class="f"><span class="math inline">P(Y \mid T)</span></div></div>
+  <div class="card t-red"><span class="tag red">Doing · a twin that recommends settings</span><p style="margin:.5em 0 0 0">If I set 2 hours for this batch, will the parts be good?</p><div class="f"><span class="math inline">P(Y \mid do(T))</span></div></div>
+</div>
+<p class="center fragment" style="margin-top:14px;font-weight:650">A twin that learns from these logs recommends 2 hours, also for the humid batches. Which table to trust is decided by the <span class="alert">causal graph</span>, not by the data.</p>
+<p class="center tiny muted" style="margin-top:6px">Illustrative numbers. The medical original: kidney stones, Charig et al., BMJ, 1986 (Simpson’s paradox).</p>
+</div></div>
+<aside class="notes">4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones).</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Three kinds of twin: the ladder of causation</h2></header>
+<div class="sbody"><div class="fit">
+<div class="rung r3 fragment fade-up" data-fragment-index="1" style="margin-left:220px"><div class="rn">3</div><div class="ri">💭</div><div><div class="rt">Root-cause twin <span>imagining</span></div><div class="rq">What if I had done otherwise?</div></div><div class="rx">This part was scrapped. Would it have been good with another setting?</div><div class="rf"><span class="math inline">P(y_x \mid x', y')</span></div></div><div class="rung r2 fragment fade-up" data-fragment-index="0" style="margin-left:110px"><div class="rn">2</div><div class="ri">✋</div><div><div class="rt">What-if twin <span>doing</span></div><div class="rq">What if I change it?</div></div><div class="rx">Raise the mold temperature by 5 °C: what happens to scrap?</div><div class="rf"><span class="math inline">P(y \mid do(x))</span></div></div><div class="rung r1" style="margin-left:0px"><div class="rn">1</div><div class="ri">👁️</div><div><div class="rt">Monitoring twin <span>seeing</span></div><div class="rq">What will I see next?</div></div><div class="rx">Predict the quality of the next part from the sensors.</div><div class="rf"><span class="math inline">P(y \mid x)</span></div></div>
+<p class="fragment" data-fragment-index="2" style="margin-top:16px">Most data-driven twins live on the first rung. To climb, data are not enough: we need <span class="alert">a causal graph</span>. From physics when we have it, from the data when we do not.</p>
+<p class="tiny muted">Ladder of causation: Pearl and Mackenzie, <i>The Book of Why</i>, 2018.</p>
+</div></div>
+<aside class="notes">7:00. Most data-driven twins are on rung 1. What-if and root cause are rungs 2 and 3: they need a graph.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Two ways out, and a catch</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid2">
+  <div class="card t-gold"><div class="ico">🎲</div><h3>Experimenting</h3><p style="margin:0">A designed experiment (DoE) is the randomized trial of the factory. It answers the question, but it stops the line. Nobody randomizes a power grid.</p></div>
+  <div class="card t-teal"><div class="ico">🎚️</div><h3>Adjusting</h3><p style="margin:0">Works only for the <i>right</i> variables. “Adjust for everything” is not a safe default.</p></div>
+</div>
+<div class="cols fragment" style="align-items:center;margin-top:22px">
+  <div class="col" style="flex:.8"><svg class="dag " viewBox="0 0 440 210" width="440" height="210"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="122.9" y1="69.0" x2="192.1" y2="141.0" marker-end="url(#ah)" /><line class="e " x1="317.1" y1="69.0" x2="247.9" y2="141.0" marker-end="url(#ah)" /><rect class="n " x="23.2" y="16.0" width="143.5" height="48" rx="12"/><text x="95" y="41">Defect 1</text><rect class="n " x="273.2" y="16.0" width="143.5" height="48" rx="12"/><text x="345" y="41">Defect 2</text><rect class="n shade" x="125.0" y="146.0" width="190.0" height="48" rx="12"/><text x="220" y="171">🔍 Rejected</text></svg></div>
+  <div class="col"><p>Two unrelated defects both get a part rejected at inspection. Look only at the rejected parts, and the defects become correlated.</p>
+  <p style="margin:0">Conditioning on a common <i>effect</i>, a <b>collider</b>, <span class="alert">creates</span> a spurious correlation instead of removing one.</p></div>
+</div>
+<div class="banner fragment"><b>So we need the graph first.</b> Confounder or collider? The data alone look the same. Finding the graph from observations is <em>causal discovery</em>.</div>
+</div></div>
+<aside class="notes">8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Two different problems: inference and discovery</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid2">
+  <div class="card t-blue"><span class="tag blue">Causal inference</span><h3 style="margin-top:10px">The graph is given.</h3>
+    <p><i>How much</i> does X change Y?</p>
+    <p class="small muted">Drying time: we knew that moisture was the confounder, and computed the effect of the drying time.</p>
+    <p style="margin:0"><b>Output:</b> a number (an effect).</p></div>
+  <div class="card t-red"><span class="tag red">Causal discovery</span><h3 style="margin-top:10px">The graph is the unknown.</h3>
+    <p><i>What</i> causes what?</p>
+    <p class="small muted">Drying time: who told us that moisture comes before the choice of the drying time, and not after?</p>
+    <p style="margin:0"><b>Output:</b> a graph.</p></div>
+</div>
+<div class="flow">
+  <div class="box">data</div><div class="arrow">discovery</div><div class="box" style="border-color:var(--accent);color:var(--accent)">graph</div><div class="arrow">inference</div><div class="box">effect of an action</div>
+</div>
+<p class="center fragment" style="margin-top:16px">Until now we did inference, with a graph we took for granted. <b>The rest of this talk is about discovery.</b></p>
+</div></div>
+<aside class="notes">10:00. Short. Discovery gives the graph, inference uses it. From here on: discovery.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Conditioning is also how we find the graph</h2></header>
+<div class="sbody"><div class="fit">
+<p class="muted">We do not know the graph, but each structure reacts differently when we condition on Z:</p>
+<div class="grid4">
+<div class="card" style="text-align:center;padding:18px 14px"><h3>Confounder</h3><svg class="dag " viewBox="0 0 300 130" width="234" height="101"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="113.0" y1="55.9" x2="87.0" y2="74.1" marker-end="url(#ah)" /><line class="e " x1="187.0" y1="55.9" x2="213.0" y2="74.1" marker-end="url(#ah)" /><rect class="n " x="18.0" y="76.0" width="64.0" height="48" rx="12"/><text x="50" y="101">X</text><rect class="n shade" x="118.0" y="6.0" width="64.0" height="48" rx="12"/><text x="150" y="31">Z</text><rect class="n " x="218.0" y="76.0" width="64.0" height="48" rx="12"/><text x="250" y="101">Y</text></svg>
+<p class="tiny muted" style="margin:.6em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y</p><span class="dep yes">dependent</span>
+<p class="tiny muted" style="margin:.7em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y, given Z</p><span class="dep no" style="outline:3px solid currentColor;outline-offset:2px">independent</span></div><div class="card" style="text-align:center;padding:18px 14px"><h3>Chain</h3><svg class="dag " viewBox="0 0 300 130" width="234" height="101"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="87.0" y1="74.1" x2="113.0" y2="55.9" marker-end="url(#ah)" /><line class="e " x1="187.0" y1="55.9" x2="213.0" y2="74.1" marker-end="url(#ah)" /><rect class="n " x="18.0" y="76.0" width="64.0" height="48" rx="12"/><text x="50" y="101">X</text><rect class="n shade" x="118.0" y="6.0" width="64.0" height="48" rx="12"/><text x="150" y="31">Z</text><rect class="n " x="218.0" y="76.0" width="64.0" height="48" rx="12"/><text x="250" y="101">Y</text></svg>
+<p class="tiny muted" style="margin:.6em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y</p><span class="dep yes">dependent</span>
+<p class="tiny muted" style="margin:.7em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y, given Z</p><span class="dep no" style="outline:3px solid currentColor;outline-offset:2px">independent</span></div><div class="card" style="text-align:center;padding:18px 14px"><h3>Collider</h3><svg class="dag " viewBox="0 0 300 130" width="234" height="101"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="87.0" y1="74.1" x2="113.0" y2="55.9" marker-end="url(#ah)" /><line class="e " x1="213.0" y1="74.1" x2="187.0" y2="55.9" marker-end="url(#ah)" /><rect class="n " x="18.0" y="76.0" width="64.0" height="48" rx="12"/><text x="50" y="101">X</text><rect class="n shade" x="118.0" y="6.0" width="64.0" height="48" rx="12"/><text x="150" y="31">Z</text><rect class="n " x="218.0" y="76.0" width="64.0" height="48" rx="12"/><text x="250" y="101">Y</text></svg>
+<p class="tiny muted" style="margin:.6em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y</p><span class="dep no">independent</span>
+<p class="tiny muted" style="margin:.7em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y, given Z</p><span class="dep yes" style="outline:3px solid currentColor;outline-offset:2px">dependent</span></div><div class="card" style="text-align:center;padding:18px 14px"><h3>Direct link</h3><svg class="dag " viewBox="0 0 300 130" width="234" height="101"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="107.0" y1="65.0" x2="193.0" y2="65.0" marker-end="url(#ah)" /><rect class="n " x="38.0" y="41.0" width="64.0" height="48" rx="12"/><text x="70" y="66">X</text><rect class="n " x="198.0" y="41.0" width="64.0" height="48" rx="12"/><text x="230" y="66">Y</text></svg>
+<p class="tiny muted" style="margin:.6em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y</p><span class="dep yes">dependent</span>
+<p class="tiny muted" style="margin:.7em 0 .2em 0;letter-spacing:.08em;text-transform:uppercase">X and Y, given Z</p><span class="dep yes" style="">dependent</span></div>
+</div>
+<div class="banner fragment"><b>The recipe.</b> If a dependence disappears once we condition, the link was spurious: remove it. What survives every conditioning set is a candidate causal link. One question, asked many times: <em>is <span class="math inline">X \perp Y \mid Z</span>?</em></div>
+</div></div>
+<aside class="notes">11:00. Four structures, one question asked many times: is X independent of Y given Z?</aside>
+</section>
+
+<section class="s top" data-transition="fade">
+<header><div class="kicker">Finding the graph</div><h2>Let's discover a graph by hand: the PC algorithm</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.95"><svg class="dag" viewBox="-30 0 580 500" width="600" height="517"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " data-from="0" data-to="0" x1="195" y1="60" x2="315" y2="60"/><line class="e test" data-from="1" data-to="1" x1="195" y1="60" x2="315" y2="60"/><path class="e " data-from="0" data-to="2" d="M 70,90 C -40,260 40,420 172,450"/><path class="e " data-from="0" data-to="2" d="M 450,90 C 560,260 480,420 348,450"/><path class="e test" data-from="3" data-to="3" d="M 70,90 C -40,260 40,420 172,450"/><path class="e test" data-from="3" data-to="3" d="M 450,90 C 560,260 480,420 348,450"/><line class="e " data-from="0" data-to="4" x1="137" y1="89" x2="238" y2="226"/><line class="e " data-from="0" data-to="4" x1="383" y1="89" x2="282" y2="226"/><line class="e hot" data-from="5" data-to="6" x1="137" y1="89" x2="238" y2="226" marker-end="url(#ah)"/><line class="e hot" data-from="5" data-to="6" x1="383" y1="89" x2="282" y2="226" marker-end="url(#ah)"/><line class="e " data-from="0" data-to="5" x1="260" y1="284" x2="260" y2="421"/><line class="e hot" data-from="6" data-to="6" x1="260" y1="284" x2="260" y2="421" marker-end="url(#ah)"/><rect class="n" x="40.0" y="36.0" width="150" height="48" rx="12"/><text x="115" y="61">🌧️ Rain</text><rect class="n" x="320.0" y="36.0" width="170" height="48" rx="12"/><text x="405" y="61">🚿 Sprinkler</text><rect class="n" x="170.0" y="231.0" width="180" height="48" rx="12"/><rect class="n shade" data-from="3" data-to="3" x="170.0" y="231.0" width="180" height="48" rx="12"/><text x="260" y="256">🌱 Wet grass</text><rect class="n" x="175.0" y="426.0" width="170" height="48" rx="12"/><text x="260" y="451">⚠️ Slippery</text></svg></div>
+  <div class="col"><div class="steps">
+    <div data-from="0" data-to="0"><div class="rnd">Start</div><h3>We know nothing, so every pair is connected.</h3><p>Six possible links. <b>Round 0:</b> test each pair, conditioning on nothing.</p><p class="ask">Which pair do you expect to be independent?</p></div>
+    <div data-from="1" data-to="1"><div class="rnd">Round 0</div><h3>Rain and Sprinkler are independent.</h3><div class="ci">Rain ⊥ Sprinkler</div><p class="ask">Remove the link.</p><p>The other five pairs are dependent, so they stay for now.</p></div>
+    <div data-from="2" data-to="2"><div class="rnd">Round 1</div><h3>Now condition on one neighbour.</h3><p>Take Rain – Slippery.</p><p class="ask">Which variable would you condition on?</p></div>
+    <div data-from="3" data-to="3"><div class="rnd">Round 1</div><h3>Once we know the grass is wet, rain says nothing more about slipping.</h3><div class="ci">Rain ⊥ Slippery | Wet grass</div><br><div class="ci">Sprinkler ⊥ Slippery | Wet grass</div><p class="ask">Remove both.</p></div>
+    <div data-from="4" data-to="4"><div class="rnd">The skeleton</div><h3>These three links survive every conditioning set.</h3><p>But they have no direction yet.</p><p class="ask">Can we get arrows without running any experiment?</p></div>
+    <div data-from="5" data-to="5"><div class="rnd">Find the colliders</div><h3>Only one structure fits.</h3><p>Rain and Sprinkler are independent, both are linked to Wet grass, and we did <i>not</i> need Wet grass to separate them.</p><p class="ask">Rain → Wet grass ← Sprinkler</p></div>
+    <div data-from="6" data-to="6"><div class="rnd">Propagate</div><h3>The last arrow follows.</h3><p>If Slippery pointed into Wet grass, it would form a collider with Rain, and Wet grass could not have separated them in round 1.</p><p class="ask">So Wet grass → Slippery.</p><p><b>The full graph, from observations only.</b></p></div>
+  </div></div>
+</div>
+<span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span>
+</div></div>
+<aside class="notes">12:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 17:00.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Finding the graph</div><h2>It worked. What did we assume?</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid2" style="gap:20px">
+  <div class="card t-gold fragment fade-up"><div class="ico">🧪</div><h3>Every step was a CI test</h3><p class="small" style="margin:0">About ten for four variables, and the number explodes as variables grow.</p></div>
+  <div class="card t-red fragment fade-up"><div class="ico">🧨</div><h3>Errors propagate</h3><p class="small" style="margin:0">A link removed by mistake never comes back, and it can flip arrows elsewhere.</p></div>
+  <div class="card t-teal fragment fade-up"><div class="ico">🫥</div><h3>No hidden variables</h3><p class="small" style="margin:0">We ignored the season, which drives both rain and sprinklers.</p></div>
+  <div class="card t-blue fragment fade-up"><div class="ico">↔️</div><h3>Not every arrow can be found</h3><p class="small" style="margin:0">With two variables only, X → Y and X ← Y leave the same trace in the data.</p></div>
+</div>
+<p class="center small muted" style="margin-top:18px">This is <b>constraint-based</b> causal discovery: the PC algorithm (Spirtes and Glymour). Its time series version, PCMCI (Runge et al., 2019), is one of the most used methods today.</p>
+</div></div>
+<aside class="notes">17:00. Four cards, 15 seconds each. SKIP IF LATE.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Time series</div><h2>What changes with time?</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols">
+<div class="col" style="flex:0.48">
+<div class="blk block"><div class="blk-t">Good news: the arrow of time</div><div class="blk-b">
+<p>A cause comes before its effect.<br />
+A link between <span class="math inline">X</span> yesterday and <span class="math inline">Y</span> today can only point one way: no orientation step needed.</p>
+</div></div>
+</div>
+<div class="col" style="flex:0.48">
+<div class="blk alertblock"><div class="blk-t">Bad news: everything else</div><div class="blk-b">
+<ul>
+<li><p>Every variable <em>at every lag</em> is a node: 5 series and 3 lags already give 15 candidate causes for each variable.</p></li>
+<li><p>Each series depends on its own past, and this makes CI tests unreliable.</p></li>
+<li><p>Samples are no longer independent.</p></li>
+</ul>
+</div></div>
+</div>
+</div>
+<p><strong>PCMCI</strong> is PC adapted to this setting: first select the candidate parents among the lags, then test each link conditioning on the parents of both ends.</p>
+
+</div></div>
+<aside class="notes">18:00. Sensors are time series: the arrow of time helps, the number of lags hurts.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Time series</div><h2>The classical toolbox, in one slide</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<table style="width:87%;">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 36%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Family</strong></th>
+<th style="text-align: left;"><strong>Idea</strong></th>
+<th style="text-align: left;"><strong>Weak spot</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Granger causality</td>
+<td style="text-align: left;">Does the past of <span class="math inline">X</span> help predict <span class="math inline">Y</span>?</td>
+<td style="text-align: left;">Predicting is not causing; mostly linear</td>
+</tr>
+<tr>
+<td style="text-align: left;">Constraint-based (PC, PCMCI)</td>
+<td style="text-align: left;">CI tests remove spurious links</td>
+<td style="text-align: left;">Needs a clear yes/no from every test</td>
+</tr>
+<tr>
+<td style="text-align: left;">Noise-based (VarLiNGAM)</td>
+<td style="text-align: left;">Residuals are independent of the cause only in the right direction</td>
+<td style="text-align: left;">Non-Gaussian noise, linearity</td>
+</tr>
+<tr>
+<td style="text-align: left;">Score-based (DYNOTEARS)</td>
+<td style="text-align: left;">Search for the graph that best fits the data</td>
+<td style="text-align: left;">Linearity, acyclicity</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each family bets on one assumption, and fails when the data break it.</p>
+
+</div></div>
+<aside class="notes">19:00. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you.</aside>
+</section>
+
+<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Part 2 · results</div><h2>Does it help a real twin?</h2><p class="sub">Plastic injection molding, on data collected at Sirris. Then what we are building now.</p></div><aside class="notes">20:30. Breathe. Second half: results.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Injection molding · with Sirris</div><h2>A twin that has to survive a change of production</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.42">
+    <div class="molds"><figure><img src="img/mold_plate.jpg"><figcaption>Test plate</figcaption></figure><figure><img src="img/mold_isoa.jpg"><figcaption>Tensile bar ISO A</figcaption></figure></div>
+  </div>
+  <div class="col">
+    <table class="prod">
+      <thead><tr><th>Run</th><th>Parts</th><th>Material</th><th>Mold</th><th>What changes</th></tr></thead>
+      <tbody>
+      <tr class=""><td><b>65</b></td><td>497</td><td>ABS GP22</td><td>plate</td><td class="muted">reference</td></tr><tr class=""><td><b>87</b></td><td>437</td><td>ABS GP22</td><td>plate</td><td class="muted">drying intervals</td></tr><tr class=""><td><b>88</b></td><td>498</td><td>ABS GP35</td><td>plate</td><td class="muted">material grade</td></tr><tr class=""><td><b>89</b></td><td>510</td><td>PC/ABS T65XF</td><td>plate</td><td class="muted">polymer</td></tr><tr class=""><td><b>97</b></td><td>340</td><td>ABS GP22</td><td>ISO A bar</td><td class="muted">mold</td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin:0"><b>17 process variables</b> per part: heating zones, pressures, times, cushion, ambient conditions.<br><b>Target:</b> a binary quality label, derived from the drying of the material.</p>
+  </div>
+</div>
+<div class="banner fragment"><b>The test.</b> Train on four productions, predict the fifth. A new material or a new mold moves every sensor: <em>domain shift</em>.</div>
+<p class="src">Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. <i>Future Generation Computer Systems</i>, 2026. Parts counted after cleaning.</p>
+</div></div>
+<aside class="notes">21:00. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Injection molding · with Sirris</div><h2>Which sensors should the twin trust?</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.8">
+    <div class="card t-red" style="padding:16px 22px"><span class="tag red">Causal feature selection</span>
+      <ol class="small" style="margin:.6em 0 0 1.1em">
+        <li>Run PCMCI on <b>each production</b> separately, with delays up to 20 parts.</li>
+        <li>Keep a variable only if it is a cause of the target in <b>all five</b>.</li>
+      </ol>
+      <p class="small muted" style="margin:.5em 0 0 0">What holds in every production is a candidate <i>invariant</i> mechanism, the kind that survives a domain shift.</p></div>
+    <p class="small" style="margin-top:14px">Compared with <b>all 17</b> variables, and with the <b>7</b> chosen by the process expert.</p>
+  </div>
+  <div class="col">
+<svg class="venn" viewBox="0 0 640 400" width="640" height="400">
+<circle class="ve" cx="235" cy="220" r="178"/><circle class="vc" cx="405" cy="220" r="178"/>
+<text class="vt" x="150" y="18" style="fill:var(--blue)">Domain expert · 7</text>
+<text class="vt" x="490" y="18" style="fill:var(--accent)">Causal discovery · 9</text>
+<text x="142" y="192">Integral value</text><text x="142" y="220">Cycle time</text><text x="142" y="248">Dosing time</text>
+<text class="vb" x="320" y="140">Both · 4</text>
+<text x="320" y="178">Material cushion</text><text x="320" y="206">Max inj. pressure</text><text x="320" y="234">Switch-over press.</text><text x="320" y="262">Mold safety time</text>
+<text x="498" y="164">Heating zone 2</text><text x="498" y="192">Heating zone 3</text><text x="498" y="220">Heating zone 4</text><text x="498" y="248">Heating zone 5</text><text x="498" y="276">Injection speed</text>
+</svg></div>
+</div>
+<div class="banner fragment">Without being told, the algorithm found <em>4 of the 7</em> expert variables, and proposed the thermal ones.</div>
+</div></div>
+<aside class="notes">22:30. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Injection molding · with Sirris</div><h2>What we learned</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.95">
+    <div class="card" style="padding:16px 22px">
+      <span class="tag">Mean F1 on the unseen production</span>
+      <div style="margin-top:10px">
+      <div class="brow" style="--lw:230px"><span class="bl">Causal<small>9 variables</small></span><div class="sbar " data-vals="0.396" data-min="0" data-max="0.5"><i></i></div><b class="bv" data-dec="3"></b></div><div class="brow" style="--lw:230px"><span class="bl">All<small>17 variables</small></span><div class="sbar g" data-vals="0.394" data-min="0" data-max="0.5"><i></i></div><b class="bv" data-dec="3"></b></div><div class="brow" style="--lw:230px"><span class="bl">Domain expert<small>7 variables</small></span><div class="sbar g" data-vals="0.387" data-min="0" data-max="0.5"><i></i></div><b class="bv" data-dec="3"></b></div>
+      </div>
+      <p class="tiny muted" style="margin:.6em 0 0 0">Averages over nearly 100,000 training runs: 2 models, 14 adaptation settings, 5 held-out productions.</p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="lessons">
+      <div class="fragment fade-up"><b>Half of the sensors, the same accuracy.</b> Chosen from the data, with no expert in the loop, and close to what the expert would choose.</div>
+      <div class="fragment fade-up"><b>Naive adaptation hurts.</b> Rescaling each past production on its own is always worse than doing nothing. The best method (0.431) only matches no adaptation (0.430).</div>
+      <div class="fragment fade-up"><b>The graph is only as good as the algorithm.</b> PCMCI gives robust delayed dependencies, not proven physics. It is slow, and every test is a yes/no decision.</div>
+    </div>
+  </div>
+</div>
+<p class="center fragment" style="margin-top:14px;font-weight:650">A hard task and small differences: the twin is limited by <span class="alert">how well we can find the graph</span>.</p>
+</div></div>
+<aside class="notes">24:00. Be honest: the differences are small. The message is: same accuracy with half of the sensors, chosen without an expert, and naive adaptation hurts. Third card is the bridge to the next part.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Pretrained causal discovery</div><h2>A different idea: learn to read causal structure, once</h2></header>
+<div class="sbody"><div class="fit">
+<div class="pipe">
+  <div class="pb"><div class="pi">📈</div><b>Your time series</b><span>any number of sensors</span></div><div class="pa">⟶</div>
+  <div class="pb"><div class="pi">🧮</div><b>Dependence statistics</b><span>8 numbers per pair of sensors and delay</span></div><div class="pa">⟶</div>
+  <div class="pb hot"><div class="pi">🧠</div><b>Pretrained network</b><span>trained on simulations only</span></div><div class="pa">⟶</div>
+  <div class="pb"><div class="pi">🕸️</div><b>Causal graph</b><span>who → whom, after how long, with a probability</span></div>
+</div>
+<div class="grid3" style="margin-top:22px">
+  <div class="card t-teal fragment fade-up" style="padding:16px 20px"><h3>Learn from simulators</h3><p class="small" style="margin:0">About 60,000 simulated systems whose graph is known. The network learns what cause and effect <i>look like</i> in the data, instead of running hundreds of yes/no tests.</p></div>
+  <div class="card t-gold fragment fade-up" style="padding:16px 20px"><h3>No retraining</h3><p class="small" style="margin:0">On new data it is a single pass: no tuning, no GPU, an answer in seconds.</p></div>
+  <div class="card t-blue fragment fade-up" style="padding:16px 20px"><h3>Any size</h3><p class="small" style="margin:0">The same weights serve 5 sensors or 1000. The other pretrained models stop at 5 to 12 variables.</p></div>
+</div>
+<p class="src">TD2C: Paldino and Bontempi, <i>International Journal of Forecasting</i>, 2026. &nbsp;DTD2C: ongoing work, under review.</p>
+</div></div>
+<aside class="notes">26:30. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems.</aside>
+</section>
+
+<section class="s top">
+<header><div class="kicker">Pretrained causal discovery</div><h2>Trained up to 40 variables, tested up to 1000</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:1.75"><div class="lchart"><script type="application/json">{"w": 760, "h": 470, "m": {"l": 66, "r": 120, "t": 14, "b": 52}, "x": {"log": true, "min": 8, "max": 1150, "ticks": [10, 20, 40, 80, 200, 500, 1000], "label": "number of variables"}, "y": {"min": 0.58, "max": 0.93, "ticks": [0.6, 0.7, 0.8, 0.9], "label": "AUROC"}, "zone": [8, 40, "training sizes"], "series": [{"color": "#8a93a3", "lo": [10, 6], "pts": [[10, 0.753], [20, 0.796], [40, 0.824], [80, 0.791], [120, 0.814], [160, 0.821], [200, 0.806], [500, 0.819], [1000, 0.78]]}, {"color": "#8a6a3c", "lo": [-16, 18], "pts": [[10, 0.633], [20, 0.739], [40, 0.784]]}, {"color": "#e07b00", "lo": [-26, 20], "pts": [[10, 0.643], [20, 0.771], [40, 0.789], [80, 0.764], [120, 0.788]]}, {"color": "#1f9d57", "lo": [10, 2], "pts": [[10, 0.605], [20, 0.785], [40, 0.786], [80, 0.767], [120, 0.744], [160, 0.794], [200, 0.785]]}, {"color": "#c64f9b", "lo": [-50, 20], "pts": [[10, 0.637], [20, 0.758], [40, 0.772], [80, 0.766], [120, 0.736], [160, 0.787], [200, 0.793], [500, 0.736]]}, {"name": "DTD2C", "color": "#2f6fde", "bold": true, "step": 1, "lo": [12, -6], "pts": [[10, 0.883], [20, 0.884], [40, 0.897], [80, 0.867], [120, 0.875], [160, 0.885], [200, 0.851], [500, 0.873], [1000, 0.828]]}]}</script></div><div class="legend" style="font-size:15px;gap:16px;margin-top:0"><span><i style="background:#8a93a3"></i>rank mean of the inputs</span><span><i style="background:#e07b00"></i>PCMCI+</span><span><i style="background:#1f9d57"></i>VAR-LiNGAM</span><span><i style="background:#c64f9b"></i>Lasso-Granger</span><span><i style="background:#8a6a3c"></i>TD2C</span></div></div>
+  <div class="col">
+    <p class="small muted">The classical methods first: each line stops where the method no longer finishes within 30 minutes.</p>
+    <div class="fragment">
+      <div class="stat colA" data-count="0.83" data-dec="2">0.83</div><div class="stat-l">AUROC at 1000 variables</div>
+      <div class="stat colA" data-count="25" data-suf="×">25×</div><div class="stat-l">the largest training size, with no retraining</div>
+    </div>
+  </div>
+</div>
+</div></div>
+<aside class="notes">29:00. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Pretrained causal discovery</div><h2>A real case: 42 river stations</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img src="figures/dtd2c_flood_case.png" style="width:92.0%" alt="" /></p>
+</div>
+<p>The 42 pairs the model scores highest against the 42 true edges: 10 are correct. Of the 32 mistakes, 25 link stations of the same basin on different branches, 4 are reversed and 3 point to an indirect ancestor. <strong>None links unrelated stations.</strong></p>
+
+</div></div>
+<aside class="notes">31:00. Real data, never seen. 10 of 42 right; the mistakes are all inside the same basin. SKIP IF LATE.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Pretrained causal discovery</div><h2>Where it breaks, and why</h2></header>
+<div class="sbody"><div class="fit">
+<div class="blk block"><div class="blk-t">1. Real series do not look like simulated ones</div><div class="blk-b">
+<p>Long and strongly autocorrelated: the correlation channels average about 29, against about 0 in training. The network extrapolates. On CausalTime a plain average of its own inputs (0.89) beats the network (0.67).</p>
+</div></div>
+<div class="blk block"><div class="blk-t">2. We threw away something useful</div><div class="blk-b">
+<p>The tensor ignores the scale of the series, by design. But a downstream station carries more water: the ratio of the standard deviations alone reaches 0.76 on the flood network.</p>
+</div></div>
+<div class="blk block"><div class="blk-t">3. A broken assumption</div><div class="blk-b">
+<p>On NetSim the effects happen within one sampling step. We only look at lagged effects.</p>
+</div></div>
+<p>Next: statistics that do not blow up on long series, calibration without labels, same-time effects.</p>
+
+</div></div>
+<aside class="notes">32:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases.</aside>
+</section>
+
+<section class="s top">
+<header><div class="kicker">From paper to tool</div><h2>Upload a CSV, get the causal graph</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center;gap:26px">
+  <div class="col" style="flex:0 0 auto"><div class="shot"><img src="img/dash_upload.png"></div></div>
+  <div class="col">
+    <p class="small"><b>Input.</b> One row per time step, one column per sensor.</p>
+    <p class="small"><b>Output.</b> Every link with its delay and a probability. A slider sets how sure the model must be.</p>
+    <p class="small"><b>Speed.</b> 10 sensors, 500 steps: a quarter of a second on a CPU.</p>
+    <p class="small"><b>Baseline.</b> Granger causality runs next to it.</p>
+    <p class="tiny muted" style="margin:0">Prototype running at ULB. The file in the picture is a demo.</p>
+  </div>
+</div>
+<div class="banner fragment">No code, no install, no GPU. <em>Bring a file.</em></div>
+</div></div>
+<aside class="notes">34:00. The tool exists. Offer: send a CSV, or we run it together.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Digital twins</div><h2>Where causality sits in the twin</h2></header>
+<div class="sbody"><div class="fit">
+<div class="pipe">
+  <div class="pb"><div class="pi">📡</div><b>Sensor logs</b><span>what the plant already records</span></div><div class="pa">⟶</div>
+  <div class="pb hot"><div class="pi">🕸️</div><b>Causal graph</b><span>discovered from data, corrected by the expert</span></div><div class="pa">⟶</div>
+  <div class="pb wide">
+    <div class="use"><i class="tag green">done</i><b>Robust models</b><span>features that survive a new production</span></div>
+    <div class="use"><i class="tag gold">next</i><b>What-if</b><span>simulate a change of set-point before making it</span></div>
+    <div class="use"><i class="tag gold">next</i><b>Root cause</b><span>explain an alarm to the operator</span></div>
+  </div>
+</div>
+<div class="card t-red fragment" style="margin-top:22px;padding:16px 24px"><span class="tag red">What we would like to discuss</span>
+  <div class="grid2" style="gap:8px 34px;margin-top:8px">
+    <p class="small" style="margin:0"><b>Data with known interventions.</b> A DoE campaign is ground truth for causal discovery: we can check the graph against what you changed on purpose.</p>
+    <p class="small" style="margin:0"><b>Larger systems.</b> A line with hundreds of sensors, where today nobody can draw the graph by hand.</p>
+  </div>
+</div>
+</div></div>
+<aside class="notes">35:30. Where each piece sits in a twin, and what we would like from this meeting.</aside>
+</section>
+
+<section class="s">
+<header><div class="kicker">Wrap-up</div><h2>Take-home messages</h2></header>
+<div class="sbody"><div class="fit">
+<div class="take">
+  <div class="fragment fade-up"><span><b>Seeing is not doing.</b> A twin that only predicts tells you what happens if nothing changes. A twin that acts needs the causal graph.</span></div>
+  <div class="fragment fade-up"><span><b>The graph can be learned from logged data.</b> By conditioning, one test at a time. It works under assumptions, and tests fail.</span></div>
+  <div class="fragment fade-up"><span><b>Injection molding:</b> causal selection recovers most of the expert's choice and keeps the accuracy with half of the sensors. Naive adaptation hurts.</span></div>
+  <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we need real industrial cases.</span></div>
+</div>
+</div></div>
+<aside class="notes">37:00. Four sentences. Stop at 38:00, two minutes of margin.</aside>
+</section>
+
+<section class="hero" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="zoom">
+<div class="wrap" style="align-items:center;text-align:center">
+  <h1 style="max-width:none">Thank you.</h1>
+  <div class="sub" style="margin-bottom:0">Questions, and data, are welcome.</div>
+  <div class="meta" style="margin-top:28px">Gian Marco Paldino · Machine Learning Group, Université Libre de Bruxelles</div>
+</div>
+<aside class="notes">38:00. Questions.</aside>
+</section>
+
+<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Backup</div><h2>More, if you ask</h2><p class="sub">Slides kept for the discussion.</p></div></section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>How do we break a spurious correlation?</h2></header>
+<div class="sbody"><div class="fit">
+<p class="muted">The spurious part travels along Drying time ← Moisture → Good part. Two ways to block it:</p>
+<div class="grid2">
+  <div class="card t-gold">
+    <span class="tag gold">1 · Randomize</span><h3 style="margin-top:8px">Cut the arrow</h3>
+    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e cut u" x1="246.7" y1="63.0" x2="133.3" y2="149.0" /><line class="x" x1="181.0" y1="97.0" x2="199.0" y2="115.0"/><line class="x" x1="181.0" y1="115.0" x2="199.0" y2="97.0"/><line class="e hot" x1="67.0" y1="63.0" x2="88.0" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="294.1" y1="63.0" x2="320.9" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n " x="5.0" y="10.0" width="110.0" height="48" rx="12"/><text x="60" y="35">🪙 Coin</text><rect class="n " x="207.5" y="10.0" width="155.0" height="48" rx="12"/><text x="285" y="35">Moisture</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Drying time</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Good part</text></svg>
+    <p class="small" style="margin:.5em 0 0 0">A coin decides the drying time: both groups get the same mix of dry and humid granulate.</p>
+  </div>
+  <div class="card t-teal">
+    <span class="tag">2 · Condition</span><h3 style="margin-top:8px">Hold the confounder fixed</h3>
+    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="186.8" y1="63.0" x2="118.2" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="234.2" y1="63.0" x2="305.8" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n shade" x="132.5" y="10.0" width="155.0" height="48" rx="12"/><text x="210" y="35">Moisture</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Drying time</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Good part</text></svg>
+    <p class="small" style="margin:.5em 0 0 0">What the second table did. Then average the rows: <span class="math inline">P(y \mid do(t)) = \sum_z P(y \mid t, z)\,P(z)</span></p>
+  </div>
+</div>
+<div class="card" style="margin-top:16px;padding:14px 24px">
+  <div class="swap"><span class="tag" data-from="0" data-to="0">Good parts · as observed</span><span class="tag green" data-from="1">Good parts · adjusted for moisture</span></div>
+  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colA">Long drying</span><div class="sbar" data-vals="79,85" data-min="60" data-max="90"><i></i></div><b class="bv colA" data-suf="%"></b></div>
+  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colB">Short drying</span><div class="sbar b" data-vals="85,78" data-min="60" data-max="90"><i></i></div><b class="bv colB" data-suf="%"></b></div>
+  <span class="fragment ghost"></span>
+</div>
+<p class="center fragment" style="margin-top:10px;font-weight:650">Same data, same parts. <span class="alert">The ranking flips back.</span></p>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Predicting at a new <i>x</i> is not setting <i>x</i></h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid2">
+  <div class="card t-blue"><span class="tag blue">Prediction</span>
+    <p style="margin:.5em 0">Fit <span class="math inline">f(x) \approx E[Y \mid X = x]</span>, then plug in a new <i>x</i> that you <b>observe</b>.</p>
+    <p class="small muted" style="margin:0">Valid as long as the new case comes from the same world as the training data.</p></div>
+  <div class="card t-red"><span class="tag red">Intervention</span>
+    <p style="margin:.5em 0">Now you <b>set</b> <i>x</i> yourself: <span class="math inline">E[Y \mid do(X = x)]</span>.</p>
+    <p class="small muted" style="margin:0">Plugging <i>x</i> into the same <i>f</i> is valid only if no spurious path between X and Y is left open.</p></div>
+</div>
+<div class="card t-teal fragment" style="margin-top:18px;text-align:center"><span class="tag">When the variables Z close every back-door path</span>
+  <div style="font-size:30px;margin:.35em 0"><span class="math inline">E[Y \mid do(x)] = \sum_z E[Y \mid x, z]\,P(z)</span></div>
+  <p class="small" style="margin:0">The same regression, with the right covariates, averaged over the population.</p></div>
+<p class="center small fragment" style="margin-top:12px">Drying time: quality on drying time alone says <b class="colB">short, by 6 points</b>. Adding moisture says <b class="colA">long, by 7.5 points</b>.</p>
+<div class="banner fragment"><b>Do-calculus is not a new estimator.</b> It tells you <em>when</em> your regression answers the causal question.</div>
+</div></div>
+</section>
+
+<section class="s onimg glass" data-background-image="img/pills_dark.jpg" data-background-size="cover" data-background-position="center" data-background-color="#0b132b" data-transition="fade">
+<header><div class="kicker">Why causality?</div><h2>When correlations made the decision</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid3">
+  <div class="card t-red fragment fade-up"><div class="ico">💊</div><h3>Hormone therapy after menopause</h3>
+    <p class="small">Observational studies: users had about <b>40% less</b> coronary heart disease. Prescribed for prevention to millions of women.</p>
+    <p class="small" style="margin:0"><span class="tag red">Trial, WHI 2002</span><br>Stopped early: <b>more</b> heart disease, stroke and breast cancer. Users were healthier and wealthier to begin with.</p></div>
+  <div class="card t-red fragment fade-up"><div class="ico">🫀</div><h3>Anti-arrhythmic drugs after a heart attack</h3>
+    <p class="small">Irregular beats predict sudden death, the drugs suppress the beats: they became routine.</p>
+    <p class="small" style="margin:0"><span class="tag red">Trial, CAST 1989–91</span><br>Deaths: <b>63 of 755</b> on the drugs, <b>26 of 743</b> on placebo.</p>
+    <div style="margin-top:10px"><div class="tiny muted">drugs · 8.3%</div><div class="bar" style="height:12px"><i style="--w:83%;background:var(--accent)"></i></div>
+    <div class="tiny muted" style="margin-top:6px">placebo · 3.5%</div><div class="bar" style="height:12px"><i style="--w:35%;background:#9aa3b2"></i></div></div></div>
+  <div class="card t-red fragment fade-up"><div class="ico">🤖</div><h3>A machine learning model for pneumonia</h3>
+    <p class="small">Trained on hospital records, it learned that <i>asthma lowers the risk of dying</i>: asthmatic patients went straight to intensive care.</p>
+    <p class="small" style="margin:0"><span class="tag red">Caruana et al., KDD 2015</span><br>As a triage rule, it would have sent them home.</p></div>
+</div>
+<p class="punch fragment" style="color:#fff;text-align:center">Accurate predictions, <em style="color:#ffb3bf">wrong decisions.</em></p>
+</div></div>
+<div class="credit">Photo: Yinan Chen (public domain), via Wikimedia Commons</div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Injection molding: domain adaptation in detail</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:1.6"><img src="img/fgcs_scaling.png"></div>
+  <div class="col">
+    <p class="small"><b>Grouped</b> = each past production rescaled on its own. Always below no adaptation.</p>
+    <p class="small"><b>Non-grouped</b> = the past productions rescaled as one. It catches up as more parts of the new production are seen (10, 50, 100).</p>
+    <p class="small">Best single configuration: dynamic trend scaling with the expert variables, F1 0.459.</p>
+    <p class="small muted" style="margin:0">Friedman test over the 14 configurations: significant. Best adaptation vs none: not significant (p = 0.40).</p>
+  </div>
+</div>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The Traditional Toolbox: Approach 1 - Granger Causality</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img class="figsvg" src="fig/fa288a24624.svg" style="width:min(100%,536px)" alt="" /></p>
+</div>
+<p>Time series <span class="math inline">z_i</span> <strong>“Granger-causes"</strong> <span class="math inline">z_j</span> if adding the past of <span class="math inline">z_i</span> to a model using the past of <span class="math inline">z_j</span> significantly <strong>improves the prediction</strong> of <span class="math inline">z_j</span>’s future.</p>
+<div class="blk alertblock"><div class="blk-t">Limitations</div><div class="blk-b">
+<p>(1) Improving predictions <span class="math inline">\neq</span> Causing (eg. ice cream sales, shark attacks).<br />
+(2) Mostly handles <em>linear</em> relationships (eg. VAR)</p>
+</div></div>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The Traditional Toolbox: Approach 2 - Noise-Based</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols">
+<div class="col" style="flex:0.40">
+<p>True Direction: <strong><span class="math inline">x_1 \to x_2</span></strong> <span class="math inline">x_2 = f(x_1) + \text{Noise}_2</span></p>
+</div>
+<div class="col" style="flex:0.40">
+<p>Wrong Direction: <strong><span class="math inline">x_2 \to x_1</span></strong> <span class="math inline">x_1 = g(x_2) + \text{Noise}_1</span></p>
+</div>
+</div>
+<p><img src="figures/residuals.png" alt="" /></p>
+<p>The noise of a true causal model should be statistically independent of the cause. Does not hold for the reverse direction.</p>
+<div class="blk alertblock"><div class="blk-t">Limitations</div><div class="blk-b">
+<p>Methods like VarLiNGAM (Hyvärinen et al., 2010) require the noise being non-Gaussian, and often assume linearity (VAR).</p>
+</div></div>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The Traditional Toolbox: Approach 3 - Score-Based</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img class="figsvg" src="fig/f5c2e137bb2.svg" style="width:min(100%,1014px)" alt="" /></p>
+</div>
+<p><span class="math display">\underset{\mathbf{W}}{\operatorname{minimize}} \quad \underbrace{\frac{1}{2n} \|\mathbf{X} - \mathbf{XW}\|_F^2}_{\text{Data Fit (Least Squares)}} + \underbrace{\lambda h(\mathbf{W})}_{\text{Acyclicity Constraint}}</span></p>
+<p>Frame causal discovery as an optimization problem. Search for the graph structure that best explains the data by minimizing a score function.</p>
+<div class="blk alertblock"><div class="blk-t">Limitations</div><div class="blk-b">
+<p>NOTEARS (Pamfil et al., 2020) assumes a linear model structure (Least Squares) and requires the graph to be acyclic.</p>
+</div></div>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The Traditional Toolbox: Approach 4 - Constraint-Based</h2></header>
+<div class="sbody"><div class="fit">
+<p><img src="figures/pc.png" alt="" /></p>
+<p>From a fully connected graph, we use Conditional Independence (CI) tests to remove links that are merely correlational.</p>
+<div class="blk alertblock"><div class="blk-t">Limitations</div><div class="blk-b">
+<p>Methods like PCMCI (Runge et al., 2019) heavily depend on the CI tests giving a clear “yes/no“ answer.</p>
+</div></div>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Cause and effect do not look the same</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img class="figsvg" src="fig/f9b3d91377a.svg" style="width:min(100%,913px)" alt="" /></p>
+</div>
+<div class="cols">
+<div class="col" style="flex:0.48">
+<div class="blk block"><div class="blk-t">Seen from the cause <span class="math inline">X</span></div><div class="blk-b">
+<p>Parent of <span class="math inline">X</span> <span class="math inline">\rightarrow X \rightarrow Y</span> is a <strong>chain</strong>.<br />
+Given <span class="math inline">X</span>, its parent says nothing more about <span class="math inline">Y</span>: dependence <span class="math inline">= 0</span>.</p>
+</div></div>
+</div>
+<div class="col" style="flex:0.48">
+<div class="blk block"><div class="blk-t">Seen from the effect <span class="math inline">Y</span></div><div class="blk-b">
+<p><span class="math inline">X \rightarrow Y \leftarrow</span> Parent of <span class="math inline">Y</span> is a <strong>collider</strong>.<br />
+Given <span class="math inline">Y</span>, <span class="math inline">X</span> and the other parent become dependent: dependence <span class="math inline">&gt; 0</span>.</p>
+</div></div>
+</div>
+</div>
+<p>Same measurement, roles swapped, different answer: <span class="alert">an asymmetry that reveals the direction</span>.</p>
+<div class="fragment">
+<p>We do not know who the parents are, so we measure it for <em>all</em> the neighbours of <span class="math inline">X</span> and <span class="math inline">Y</span> and keep the whole distribution of values. These numbers are our <strong>descriptors</strong>.</p>
+</div>
+</div></div>
+</section>
+
+<section class="s top">
+<header><div class="kicker">Backup</div><h2>TD2C: unseen synthetic dynamics</h2></header>
+<div class="sbody"><div class="fit">
+<p class="muted small">Causal discovery is a highly <b>imbalanced</b> problem (many more non-causal links than causal ones), so we use F1-Score and Balanced Accuracy.</p>
+<div class="cols" style="gap:26px">
+  <div class="col" style="flex:1.4"><div class="tag blue" style="margin:0 0 6px 164px">Balanced accuracy · bars start at 0.5</div><div class="brow" style="grid-template-columns:150px 1fr 70px"><span class="bl" style="font-weight:800">TD2C (ours)</span><div class="bar tall"><i style="--w:80.5%;background:#2f6fde"></i></div><b class="bv" data-count="0.822" data-dec="3" data-lead="0" style="font-size:22px">0.822</b></div><div class="brow" style="grid-template-columns:150px 1fr 70px"><span class="bl" style="font-weight:550">MVGC</span><div class="bar tall"><i style="--w:60.2%;background:#9aa3b2"></i></div><b class="bv" data-count="0.741" data-dec="3" data-lead="0" style="font-size:22px">0.741</b></div><div class="brow" style="grid-template-columns:150px 1fr 70px"><span class="bl" style="font-weight:550">PCMCI (GPDC)</span><div class="bar tall"><i style="--w:58.5%;background:#9aa3b2"></i></div><b class="bv" data-count="0.734" data-dec="3" data-lead="0" style="font-size:22px">0.734</b></div><div class="brow" style="grid-template-columns:150px 1fr 70px"><span class="bl" style="font-weight:550">VARLiNGAM</span><div class="bar tall"><i style="--w:53.0%;background:#9aa3b2"></i></div><b class="bv" data-count="0.712" data-dec="3" data-lead="0" style="font-size:22px">0.712</b></div><div class="brow" style="grid-template-columns:150px 1fr 70px"><span class="bl" style="font-weight:550">DYNOTEARS</span><div class="bar tall"><i style="--w:8.3%;background:#9aa3b2"></i></div><b class="bv" data-count="0.533" data-dec="3" data-lead="0" style="font-size:22px">0.533</b></div></div>
+  <div class="col"><div class="tag blue" style="margin:0 0 6px 0">F1-score</div><div class="brow" style="grid-template-columns:1fr 70px"><div class="bar tall"><i style="--w:90.1%;background:#2f6fde"></i></div><b class="bv" data-count="0.631" data-dec="3" data-lead="0" style="font-size:22px">0.631</b></div><div class="brow" style="grid-template-columns:1fr 70px"><div class="bar tall"><i style="--w:69.9%;background:#9aa3b2"></i></div><b class="bv" data-count="0.489" data-dec="3" data-lead="0" style="font-size:22px">0.489</b></div><div class="brow" style="grid-template-columns:1fr 70px"><div class="bar tall"><i style="--w:70.9%;background:#9aa3b2"></i></div><b class="bv" data-count="0.496" data-dec="3" data-lead="0" style="font-size:22px">0.496</b></div><div class="brow" style="grid-template-columns:1fr 70px"><div class="bar tall"><i style="--w:64.3%;background:#9aa3b2"></i></div><b class="bv" data-count="0.45" data-dec="3" data-lead="0" style="font-size:22px">0.45</b></div><div class="brow" style="grid-template-columns:1fr 70px"><div class="bar tall"><i style="--w:14.9%;background:#9aa3b2"></i></div><b class="bv" data-count="0.104" data-dec="3" data-lead="0" style="font-size:22px">0.104</b></div></div>
+</div>
+<div class="cols fragment" style="align-items:center;margin-top:10px">
+  <div class="col" style="flex:.6"><p class="small" style="margin:0">Friedman/Nemenyi statistical test (right is better). A <b>black bar</b> means statistically equal.</p></div>
+  <div class="col"><img src="figures/cd_TEST_balanced_accuracy.png" style="max-height:190px" alt=""></div>
+</div>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The descriptor tensor</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img class="figsvg" src="fig/f1c50ae4e9b.svg" style="width:100.0%" alt="" /></p>
+</div>
+<ul>
+<li><p>The target is taken at time <span class="math inline">t</span>, the source <span class="math inline">\ell</span> steps earlier.</p></li>
+<li><p>Every (target, source, lag) triplet is a <strong>cell</strong>, holding 8 statistics computed over all time windows.</p></li>
+<li><p><span class="math inline">V</span> variables and <span class="math inline">L</span> lags give a tensor of <span class="math inline">V \times V \times L \times 8</span> numbers: the same format for a system of any size.</p></li>
+</ul>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>What goes in a cell: eight statistics</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<table style="width:90%;">
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Statistic</strong></th>
+<th style="text-align: left;"><strong>What it sees</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Correlation</td>
+<td style="text-align: left;">Linear association</td>
+</tr>
+<tr>
+<td style="text-align: left;">Partial correlation given all the rest</td>
+<td style="text-align: left;">What survives conditioning: the second Simpson table, for continuous data</td>
+</tr>
+<tr>
+<td style="text-align: left;">The same two, on ranks</td>
+<td style="text-align: left;">Nonlinear links, as long as they are monotone</td>
+</tr>
+<tr>
+<td style="text-align: left;">HSIC (kernel independence)</td>
+<td style="text-align: left;">Any dependence, even with no trend</td>
+</tr>
+<tr>
+<td style="text-align: left;">Correlation ratio, in both directions</td>
+<td style="text-align: left;">Not symmetric: a hint on the direction</td>
+</tr>
+<tr>
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">How much to trust the others</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="blk block"><div class="blk-t">Compared with TD2C</div><div class="blk-b">
+<p>No Markov blanket to estimate, no nearest-neighbour mutual information: one matrix inversion gives every partial correlation at once.</p>
+</div></div>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>The network: variables talk to each other</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<p><img class="figsvg" src="fig/faac15f9780.svg" style="width:100.0%" alt="" /></p>
+</div>
+<ul>
+<li><p>It works on the <strong>complete</strong> graph: one node per variable, one edge per ordered pair. The causal graph appears only at the output.</p></li>
+<li><p>At each round, every variable collects messages from all the others, weighted by attention: once as a candidate <em>effect</em>, once as a candidate <em>cause</em>.</p></li>
+<li><p>After 4 rounds, each variable knows something about the whole system.</p></li>
+</ul>
+
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Training: a bigger flight simulator</h2></header>
+<div class="sbody"><div class="fit">
+<div class="center">
+<table style="width:87%;">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 27%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;"><strong>TD2C</strong></th>
+<th style="text-align: left;"><strong>DTD2C</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Training systems</td>
+<td style="text-align: left;">3,240</td>
+<td style="text-align: left;">59,765</td>
+</tr>
+<tr>
+<td style="text-align: left;">Variables</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">5 to 40</td>
+</tr>
+<tr>
+<td style="text-align: left;">Length</td>
+<td style="text-align: left;">250 steps</td>
+<td style="text-align: left;">60 to 2000 steps</td>
+</tr>
+<tr>
+<td style="text-align: left;">Dynamics</td>
+<td style="text-align: left;">9 nonlinear autoregressive processes</td>
+<td style="text-align: left;">linear, nonlinear, oscillators, and effects hidden from the mean</td>
+</tr>
+<tr>
+<td style="text-align: left;">Graph shapes</td>
+<td style="text-align: left;">random</td>
+<td style="text-align: left;">random, hubs, trees</td>
+</tr>
+<tr>
+<td style="text-align: left;">Model</td>
+<td style="text-align: left;">random forest</td>
+<td style="text-align: left;">message-passing network</td>
+</tr>
+<tr>
+<td style="text-align: left;">Decision</td>
+<td style="text-align: left;">one pair at a time</td>
+<td style="text-align: left;">all cells jointly</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>One trick: in half of the training steps the messages are switched off, so the network also learns to judge a cell without the rest of the system.</p>
+
+</div></div>
+</section>
+
+<section class="s top">
+<header><div class="kicker">Backup</div><h2>And it is fast</h2></header>
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:1.75"><div class="lchart"><script type="application/json">{"w": 760, "h": 470, "m": {"l": 76, "r": 120, "t": 14, "b": 52}, "x": {"log": true, "min": 8, "max": 1150, "ticks": [10, 20, 40, 80, 200, 500, 1000], "label": "number of variables"}, "y": {"log": true, "min": 0.04, "max": 3000, "ticks": [0.1, 1, 10, 60, 600, 1800], "fmt": ["0.1 s", "1 s", "10 s", "1 min", "10 min", "30 min"], "label": "time per system"}, "series": [{"name": "TD2C", "color": "#8a6a3c", "lo": [-14, -16], "pts": [[10, 59.42], [20, 352.21], [40, 782.91]]}, {"name": "PCMCI+", "color": "#e07b00", "lo": [-62, -14], "pts": [[10, 0.34], [20, 1.9], [40, 7.37], [80, 75.65], [120, 954.17]]}, {"name": "VAR-LiNGAM", "color": "#1f9d57", "lo": [-24, -17], "pts": [[10, 0.65], [20, 1.1], [40, 5.38], [80, 43.6], [120, 358.92], [160, 847.95], [200, 1565.23]]}, {"name": "Lasso-Granger", "color": "#c64f9b", "lo": [-36, -17], "pts": [[10, 0.06], [20, 0.14], [40, 0.31], [80, 3.93], [120, 19.84], [160, 79.09], [200, 12.38], [500, 1132]]}, {"name": "DTD2C", "color": "#2f6fde", "bold": true, "step": 1, "lo": [12, 0], "pts": [[10, 0.21], [20, 0.49], [40, 1.03], [80, 2.28], [120, 3.63], [160, 5.32], [200, 7.44], [500, 49.3], [1000, 137]]}]}</script></div></div>
+  <div class="col">
+    <p class="small muted">Limit of 30 minutes per system. PCMCI+ finishes nothing at 160 variables, TD2C one system in ten at 80.</p>
+    <div class="fragment">
+      <div class="stat colA" data-count="7.4" data-dec="1" data-suf=" s">7.4 s</div><div class="stat-l">at 200 variables (VAR-LiNGAM: 26 min)</div>
+      <div class="stat colA" data-count="12" data-suf=" ms">12 ms</div><div class="stat-l">is the network itself: the rest is computing the descriptors, on one CPU core</div>
+    </div>
+  </div>
+</div>
+</div></div>
+</section>
+
+<section class="s top">
+<header><div class="kicker">Backup</div><h2>It needs less training data</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid3" style="gap:6px">
+<div><div class="lchart"><script type="application/json">{"w": 390, "h": 330, "m": {"l": 50, "r": 14, "t": 26, "b": 50}, "x": {"log": true, "min": 400, "max": 75000, "ticks": [500, 2000, 8000, 32000], "fmt": ["500", "2k", "8k", "32k"], "label": "training systems"}, "labels": false, "title": "New systems of our generator", "y": {"min": 0.8, "max": 0.9, "ticks": [0.8, 0.82, 0.84, 0.86, 0.88, 0.9]}, "series": [{"color": "#d9480f", "pts": [[500, 0.817], [1000, 0.823], [2000, 0.837], [4000, 0.84], [8000, 0.858], [16000, 0.871], [32000, 0.874], [59765, 0.889]]}, {"color": "#2f6fde", "bold": true, "step": 1, "pts": [[500, 0.854], [1000, 0.852], [2000, 0.867], [4000, 0.875], [8000, 0.878], [16000, 0.875], [32000, 0.877], [59765, 0.877]]}]}</script></div></div>
+<div><div class="lchart"><script type="application/json">{"w": 390, "h": 330, "m": {"l": 50, "r": 14, "t": 26, "b": 50}, "x": {"log": true, "min": 400, "max": 75000, "ticks": [500, 2000, 8000, 32000], "fmt": ["500", "2k", "8k", "32k"], "label": "training systems"}, "labels": false, "title": "Lorenz-96", "y": {"min": 0.7, "max": 0.95, "ticks": [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]}, "series": [{"color": "#d9480f", "pts": [[500, 0.729], [1000, 0.712], [2000, 0.809], [4000, 0.869], [8000, 0.896], [16000, 0.9], [32000, 0.916], [59765, 0.899]]}, {"color": "#2f6fde", "bold": true, "step": 1, "pts": [[500, 0.89], [1000, 0.831], [2000, 0.838], [4000, 0.891], [8000, 0.882], [16000, 0.89], [32000, 0.905], [59765, 0.918]]}]}</script></div></div>
+<div><div class="lchart"><script type="application/json">{"w": 390, "h": 330, "m": {"l": 50, "r": 14, "t": 26, "b": 50}, "x": {"log": true, "min": 400, "max": 75000, "ticks": [500, 2000, 8000, 32000], "fmt": ["500", "2k", "8k", "32k"], "label": "training systems"}, "labels": false, "title": "NetSim", "y": {"min": 0.35, "max": 0.7, "ticks": [0.4, 0.5, 0.6, 0.7]}, "series": [{"color": "#d9480f", "pts": [[500, 0.425], [1000, 0.383], [2000, 0.371], [4000, 0.441], [8000, 0.491], [16000, 0.504], [32000, 0.531], [59765, 0.569]]}, {"color": "#2f6fde", "bold": true, "step": 1, "pts": [[500, 0.64], [1000, 0.62], [2000, 0.607], [4000, 0.591], [8000, 0.615], [16000, 0.579], [32000, 0.604], [59765, 0.612]]}]}</script></div></div>
+</div>
+<div class="legend"><span><i style="background:#d9480f"></i>raw series</span><span class="fragment"><i style="background:#2f6fde"></i>descriptors, our network</span></div>
+<div class="banner fragment">Same protocol, two inputs. With <em>500</em> training systems the descriptors reach what the raw series reach with <em>8000</em>: 16 times fewer. With enough data the raw-series model catches up.</div>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Other simulators and real data, zero-shot</h2></header>
+<div class="sbody"><div class="fit">
+<p>AUROC on the six test benchmarks, never used for any choice:</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: center;">New sys.</th>
+<th style="text-align: center;">Synth_230K</th>
+<th style="text-align: center;">Kuramoto</th>
+<th style="text-align: center;">Lorenz-96</th>
+<th style="text-align: center;">NetSim</th>
+<th style="text-align: center;">Rivers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">PCMCI+</td>
+<td style="text-align: center;">.716</td>
+<td style="text-align: center;">.726</td>
+<td style="text-align: center;">.835</td>
+<td style="text-align: center;">.790</td>
+<td style="text-align: center;">.592</td>
+<td style="text-align: center;">.521</td>
+</tr>
+<tr>
+<td style="text-align: left;">Lasso-Granger</td>
+<td style="text-align: center;">.714</td>
+<td style="text-align: center;">.729</td>
+<td style="text-align: center;"><strong>.975</strong></td>
+<td style="text-align: center;">.884</td>
+<td style="text-align: center;">.715</td>
+<td style="text-align: center;">.584</td>
+</tr>
+<tr>
+<td style="text-align: left;">VAR-LiNGAM</td>
+<td style="text-align: center;">.659</td>
+<td style="text-align: center;">.720</td>
+<td style="text-align: center;">.807</td>
+<td style="text-align: center;">.851</td>
+<td style="text-align: center;">.362</td>
+<td style="text-align: center;"><strong>.700</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">DYNOTEARS</td>
+<td style="text-align: center;">.732</td>
+<td style="text-align: center;">.742</td>
+<td style="text-align: center;">.744</td>
+<td style="text-align: center;">.836</td>
+<td style="text-align: center;">.549</td>
+<td style="text-align: center;">.557</td>
+</tr>
+<tr>
+<td style="text-align: left;">TD2C</td>
+<td style="text-align: center;">.668</td>
+<td style="text-align: center;">.767</td>
+<td style="text-align: center;">.657</td>
+<td style="text-align: center;"><strong>.951</strong></td>
+<td style="text-align: center;"><strong>.826</strong></td>
+<td style="text-align: center;">.552</td>
+</tr>
+<tr class="hl">
+<td style="text-align: left;"><strong>DTD2C</strong></td>
+<td style="text-align: center;"><strong>.899</strong></td>
+<td style="text-align: center;"><strong>.807</strong></td>
+<td style="text-align: center;">.804</td>
+<td style="text-align: center;">.919</td>
+<td style="text-align: center;">.614</td>
+<td style="text-align: center;">.588</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><p>Best on two of six, and never fitted on any of them.</p></li>
+<li><p>The aim is a pretrained model that is competitive <em>without the limit on size</em>, not the best method everywhere.</p></li>
+<li><p>TD2C is still the best on two: its descriptors see things ours do not.</p></li>
+</ul>
+
+</div></div>
+</section>
+
+<section class="s top">
+<header><div class="kicker">Backup</div><h2>Does talking help?</h2></header>
+<div class="sbody"><div class="fit">
+<p class="muted">Same descriptors, same training data, same depth. The only change: every pair is scored <b>on its own</b>, with no messages. This is the TD2C regime.</p>
+<div class="grid3">
+<div class="grp card" style="padding:14px 22px"><h3>New systems</h3><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">DTD2C</span><div class="sbar" data-vals="0.897" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">No messages</span><div class="sbar drop g" data-vals="0.897,0.779" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="delta" data-from="1" style="text-align:right">−.118</div></div><div class="grp card" style="padding:14px 22px"><h3>Flood network (rivers)</h3><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">DTD2C</span><div class="sbar" data-vals="0.755" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">No messages</span><div class="sbar drop g" data-vals="0.755,0.522" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="delta" data-from="1" style="text-align:right">−.233: down to chance</div></div><div class="grp card" style="padding:14px 22px"><h3>Lorenz-96</h3><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">DTD2C</span><div class="sbar" data-vals="0.919" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="brow" style="--lw:150px;grid-template-columns:150px 1fr 70px"><span class="bl">No messages</span><div class="sbar drop g" data-vals="0.919,0.879" data-min="0.5" data-max="1"><i></i></div><b class="bv" data-dec="3" data-lead="0" style="font-size:22px"></b></div><div class="delta" data-from="1" style="text-align:right">−.040</div></div>
+</div>
+<p class="tiny muted" style="text-align:right;margin-top:6px">AUROC. The bars start at 0.5, the level of chance.</p>
+<span class="fragment ghost"></span>
+<div class="banner red fragment"><b>Yes.</b> On the river network, without messages the model is at chance level. The information exchanged between the pairs is what makes the difference.</div>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>References and credits</h2></header>
+<div class="sbody"><div class="fit">
+<ul class="small">
+<li>Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. On the integration of domain adaptation and causal discovery in digital twins: a case study for plastic injection molding. <i>Future Generation Computer Systems</i>, 2026.</li>
+<li>Paldino, Bontempi. Causal discovery in multivariate time series through mutual information featurization. <i>International Journal of Forecasting</i>, 2026.</li>
+<li>Paldino, Bontempi. DTD2C: ongoing work, under review.</li>
+<li>Runge et al. Detecting and quantifying causal associations in large nonlinear time series datasets (PCMCI). <i>Science Advances</i>, 2019.</li>
+<li>Charig et al. Comparison of treatment of renal calculi. <i>BMJ</i>, 1986.</li>
+<li>Pearl, Mackenzie. <i>The Book of Why</i>. 2018.</li>
+</ul>
+<p class="tiny muted">Photos. Medicine bottle: Yinan Chen, public domain. Lawn sprinkler: Pixel.la, CC0 (all via Wikimedia Commons). Molded parts: from the FGCS paper, produced at Sirris.</p>
+</div></div>
+</section>
+
+</div></div>
+<script src="vendor/reveal/dist/reveal.js"></script>
+<script src="vendor/reveal/plugin/notes/notes.js"></script>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
