@@ -59,6 +59,7 @@ PLAN = [
     (S.CHAT, "2:30. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative."),
     (S.CONFOUNDER, "4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones)."),
     (S.SECURITY, "7:00. 45 seconds, for the security team: same structure, other logs. Illustrative example."),
+    (ks("When correlations made the decision"), "8:30. 75 seconds. Three real cases where an accurate prediction led to a wrong decision. Pick two, do not read all three."),
     (S.CATCH, "8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no."),
     (ks("Conditioning is also how we find the graph"), "11:00. Four structures, one question asked many times: is X independent of Y given Z?"),
     (ks("Let's discover a graph by hand"), "12:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 17:00."),
@@ -99,7 +100,6 @@ PLAN = [
     (ks("Predicting at a new", kicker=BK, edits=[
         ('Kidney stones: recovery on treatment alone says <b class="colB">B, by 5 points</b>. Adding stone size says <b class="colA">A, by 5 points</b>.',
          'Drying time: quality on drying time alone says <b class="colB">short, by 6 points</b>. Adding moisture says <b class="colA">long, by 7.5 points</b>.')]), ""),
-    (ks("When correlations made the decision"), ""),
     (S.IM_ADAPT, ""),
     (ks("The Traditional Toolbox: Approach 1", kicker=BK), ""),
     (ks("The Traditional Toolbox: Approach 2", kicker=BK), ""),
@@ -147,12 +147,13 @@ TEMPLATE = """<!doctype html>
 
 
 # Changes made after the notes were timed: seconds by which every clock time AFTER the slide with that title is shifted.
-# Added: who is talking (60 s), MLG projects (45 s), security example (45 s).
+# Added: who is talking (60 s), MLG projects (45 s), security example (45 s), the medical cases (75 s).
 # Moved to the backup: the ladder (90 s, came after the security slide), inference vs discovery (60 s), the rivers (90 s).
 SHIFT_AFTER = {
     "A machine learning lab that builds digital twins": 60,
     "from the grid to the hand": 45,
     "The same trap, in security logs": 45 - 90,
+    "When correlations made the decision": 75,
     "Two ways out, and a catch": -60,
     "Trained up to 40 variables, tested up to 1000": -90,
 }
