@@ -35,7 +35,6 @@ WHO = """
 <div class="card fragment" style="margin-top:20px;padding:14px 24px"><span class="tag green">We already work together</span>
   <p class="small" style="margin:.5em 0 0 0">The injection molding results of this talk come from ARIAC, on data produced at Sirris, with
   <b>Olivier Caelen</b>, <b>Marouene Oueslati</b>, <b>Marc Ansay</b>, <b>Pierre Dagnely</b> and Tojo Johanesa.</p></div>
-<div class="banner fragment">We bring the methods. <em>The problems and the data are yours.</em></div>
 </div></div>
 </section>
 """
@@ -193,7 +192,6 @@ SECURITY = """
     </div>
   </div>
 </div>
-<div class="banner fragment"><b>And root cause.</b> One wrong firewall rule, three hundred alerts in an hour: all correlated, <em>one cause</em>.</div>
 <p class="center tiny muted" style="margin-top:6px">Illustrative example.</p>
 </div></div>
 </section>
