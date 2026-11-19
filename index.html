@@ -91,44 +91,48 @@
 <aside class="notes">2:15. The definition is Gianluca's. Emulate and anticipate = prediction. Explain and control = the twin has to know what happens when IT changes something. That is the thread of the whole talk.</aside>
 </section>
 
-<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="fade">
+<section class="divider" data-background-image="img/corridor_dark.jpg" data-background-size="cover" data-background-position="center" data-background-color="#0b132b" data-transition="fade">
 <div class="wrap">
   <div class="num">A decision to make</div>
-  <div class="big-q">You run the molding line.<br><em>Which drying time do you set?</em></div>
-  <p class="sub">1000 parts from the production logs. The granulate was dried for 4 hours or for 2 hours. For each part we know whether it passed quality control.</p>
+  <div class="big-q">You are the doctor.<br><em>Which treatment do you recommend?</em></div>
+  <p class="sub">700 patients with kidney stones. Two treatments. For each patient we know whether they recovered.</p>
 </div>
+<div class="credit">Photo: W.carter (CC0), via Wikimedia Commons</div>
 <aside class="notes">3:45. Ask the room, wait for an answer. Do not explain anything yet.</aside>
 </section>
 
 <section class="s top" data-transition="fade">
 <div class="sbody"><div class="fit">
 <div class="chat">
-  <div class="msg me"><div class="bub">Hey Claude, which drying time do I set?</div><div class="av">🏭</div></div>
-  <div class="msg me fragment"><div class="bub">Only look at the data. No hallucinations.</div><div class="av">🏭</div></div>
+  <div class="msg me"><div class="bub">Hey Claude, what do I do?</div><div class="av">🩺</div></div>
+  <div class="msg me fragment"><div class="bub">Only look at the data. No hallucinations.</div><div class="av">🩺</div></div>
   <div class="msg ai fragment"><div class="av">✳</div><div class="bub">
-    <p>Looking only at the data: <b>short drying</b>. More good parts, and it saves two hours and energy on every batch.</p>
+    <p>Looking only at the data: <b>Treatment B</b>. It recovers more patients, and it is less invasive.</p>
     <div class="mini2">
-      <div class="cell"><span class="p colA" data-count="79" data-suf="%">79%</span><span class="f"><b class="colA">Long drying</b> · 4 h · 395 / 500 good</span><div class="bar a"><i style="--w:79%"></i></div></div>
-      <div class="cell win"><span class="p colB" data-count="85" data-suf="%">85%</span><span class="f"><b class="colB">Short drying</b> · 2 h · 425 / 500 good</span><div class="bar b"><i style="--w:85%"></i></div></div>
+      <div class="cell"><span class="p colA" data-count="78" data-suf="%">78%</span><span class="f"><b class="colA">Treatment A</b> · open surgery · 273 / 350</span><div class="bar a"><i style="--w:78%"></i></div></div>
+      <div class="cell win"><span class="p colB" data-count="83" data-suf="%">83%</span><span class="f"><b class="colB">Treatment B</b> · less invasive · 289 / 350</span><div class="bar b"><i style="--w:83%"></i></div></div>
     </div>
-    <p class="tiny muted" style="margin:.5em 0 0 0">Illustrative numbers.</p></div></div>
-  <div class="msg me fragment"><div class="bub">Are you sure?</div><div class="av">🏭</div></div>
+    <p class="tiny muted" style="margin:.5em 0 0 0">Data: Charig et al., BMJ, 1986.</p></div></div>
+  <div class="msg me fragment"><div class="bub">Are you sure?</div><div class="av">🩺</div></div>
   <div class="msg ai fragment"><div class="av">✳</div><div class="bub">Yes.</div></div>
-  <div class="msg me fragment"><div class="bub">Gemini would have done a better job.</div><div class="av">🏭</div></div>
+  <div class="msg me fragment"><div class="bub">Gemini would have done a better job.</div><div class="av">🩺</div></div>
   <div class="msg ai fragment"><div class="av">✳</div><div class="bub">
-    <p>…fine. Same parts, split by how the granulate arrived:</p>
+    <p>…fine. Same patients, split by stone size:</p>
     <div class="simp mini">
-      <div></div><div class="hd colA">Long drying · 4 h</div><div class="hd colB">Short drying · 2 h</div>
-      <div class="rl"><span>Arrived dry</span></div>
-      <div class="cell win"><span class="p" data-count="95" data-suf="%">95%</span><span class="f">95 / 100</span><div class="bar a"><i style="--w:95%"></i></div></div><div class="cell"><span class="p" data-count="90" data-suf="%">90%</span><span class="f">360 / 400</span><div class="bar b"><i style="--w:90%"></i></div></div>
-      <div class="rl"><span>Arrived humid</span></div>
-      <div class="cell win"><span class="p" data-count="75" data-suf="%">75%</span><span class="f">300 / 400</span><div class="bar a"><i style="--w:75%"></i></div></div><div class="cell"><span class="p" data-count="65" data-suf="%">65%</span><span class="f">65 / 100</span><div class="bar b"><i style="--w:65%"></i></div></div>
-      <div class="rl"><span>All parts</span></div>
-      <div class="cell tot"><span class="p">79%</span><span class="f">395 / 500</span><div class="bar a"><i style="--w:79%"></i></div></div><div class="cell tot win"><span class="p">85%</span><span class="f">425 / 500</span><div class="bar b"><i style="--w:85%"></i></div></div>
+      <div></div><div class="hd colA">Treatment A</div><div class="hd colB">Treatment B</div>
+      <div class="rl"><span>Small stones</span></div>
+      <div class="cell win"><span class="p" data-count="93" data-suf="%">93%</span><span class="f">81 / 87</span><div class="bar a"><i style="--w:93%"></i></div></div>
+      <div class="cell"><span class="p" data-count="87" data-suf="%">87%</span><span class="f">234 / 270</span><div class="bar b"><i style="--w:87%"></i></div></div>
+      <div class="rl"><span>Large stones</span></div>
+      <div class="cell win"><span class="p" data-count="73" data-suf="%">73%</span><span class="f">192 / 263</span><div class="bar a"><i style="--w:73%"></i></div></div>
+      <div class="cell"><span class="p" data-count="69" data-suf="%">69%</span><span class="f">55 / 80</span><div class="bar b"><i style="--w:69%"></i></div></div>
+      <div class="rl"><span>All patients</span></div>
+      <div class="cell tot"><span class="p">78%</span><span class="f">273 / 350</span><div class="bar a"><i style="--w:78%"></i></div></div>
+      <div class="cell tot win"><span class="p">83%</span><span class="f">289 / 350</span><div class="bar b"><i style="--w:83%"></i></div></div>
     </div></div></div>
 </div>
 </div></div>
-<aside class="notes">4:15. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative.</aside>
+<aside class="notes">4:15. Click through quickly (6 clicks). The point: the same data give two opposite answers. Real data: kidney stones, Charig et al., 1986.</aside>
 </section>
 
 <section class="s">
@@ -136,46 +140,36 @@
 <div class="sbody"><div class="fit">
 <div class="cols" style="align-items:center">
   <div class="col" style="flex:.85">
-    <svg class="dag " viewBox="0 0 440 300" width="440" height="300"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="200.9" y1="79.0" x2="114.1" y2="211.0" marker-end="url(#ah)" /><line class="e hot" x1="239.1" y1="79.0" x2="325.9" y2="211.0" marker-end="url(#ah)" /><line class="e " x1="180.0" y1="240.0" x2="270.0" y2="240.0" marker-end="url(#ah)" /><rect class="n hot" x="105.0" y="26.0" width="230.0" height="48" rx="12"/><text x="220" y="51">Granulate moisture</text><rect class="n " x="15.0" y="216.0" width="160.0" height="48" rx="12"/><text x="95" y="241">Drying time</text><rect class="n " x="275.0" y="216.0" width="140.0" height="48" rx="12"/><text x="345" y="241">Good part</text></svg>
-    <p class="center small muted" style="margin-top:10px">Moisture drives both the choice of the drying time and the quality: a <b style="color:var(--accent)">confounder</b>.</p>
+    <svg class="dag " viewBox="0 0 440 300" width="440" height="300"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="200.9" y1="79.0" x2="114.1" y2="211.0" marker-end="url(#ah)" /><line class="e hot" x1="239.1" y1="79.0" x2="325.9" y2="211.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="240.0" x2="274.0" y2="240.0" marker-end="url(#ah)" /><rect class="n hot" x="142.5" y="26.0" width="155.0" height="48" rx="12"/><text x="220" y="51">Stone size</text><rect class="n " x="23.2" y="216.0" width="143.5" height="48" rx="12"/><text x="95" y="241">Treatment</text><rect class="n " x="279.0" y="216.0" width="132.0" height="48" rx="12"/><text x="345" y="241">Recovery</text></svg>
+    <p class="center small muted" style="margin-top:10px">Stone size drives both the choice of treatment and the outcome: a <b style="color:var(--accent)">confounder</b>.</p>
   </div>
   <div class="col">
-    <p><b>Which parts got the long drying?</b> <span class="muted small">(the expensive one)</span></p>
-    <div class="mix"><span class="sm" style="--w:20%">100 dry</span><span class="lg" style="--w:80%">400 from humid granulate</span></div>
-    <p><b>Which parts got the short drying?</b></p>
-    <div class="mix"><span class="sm" style="--w:80%">400 from dry granulate</span><span class="lg" style="--w:20%">100 humid</span></div>
-    <p class="small">Operators dry for longer when the material arrives humid. The short drying mostly got the easy batches.</p>
+    <p><b>Who received treatment A?</b> <span class="muted small">(the heavy one)</span></p>
+    <div class="mix"><span class="sm" style="--w:25%">87 small</span><span class="lg" style="--w:75%">263 large stones</span></div>
+    <p><b>Who received treatment B?</b></p>
+    <div class="mix"><span class="sm" style="--w:77%">270 small stones</span><span class="lg" style="--w:23%">80 large</span></div>
+    <p class="small">Doctors gave the heavy treatment to the hard cases. B mostly got the easy ones.</p>
   </div>
 </div>
 <div class="two-q fragment" style="margin-top:14px">
-  <div class="card t-blue"><span class="tag blue">Seeing · a monitoring twin</span><p style="margin:.5em 0 0 0">Among the parts dried for 2 hours, how many were good?</p><div class="f"><span class="math inline">P(Y \mid T)</span></div></div>
-  <div class="card t-red"><span class="tag red">Doing · a twin that recommends settings</span><p style="margin:.5em 0 0 0">If I set 2 hours for this batch, will the parts be good?</p><div class="f"><span class="math inline">P(Y \mid do(T))</span></div></div>
+  <div class="card t-blue"><span class="tag blue">Seeing</span><p style="margin:.5em 0 0 0">Among the patients who received B, how many recovered?</p><div class="f"><span class="math inline">P(Y \mid T)</span></div></div>
+  <div class="card t-red"><span class="tag red">Doing</span><p style="margin:.5em 0 0 0">If I give B to this patient, will they recover?</p><div class="f"><span class="math inline">P(Y \mid do(T))</span></div></div>
 </div>
-<p class="center fragment" style="margin-top:14px;font-weight:650">A twin that learns from these logs recommends 2 hours, also for the humid batches. Which table to trust is decided by the <span class="alert">causal graph</span>, not by the data.</p>
-<p class="center tiny muted" style="margin-top:6px">Illustrative numbers. The medical original: kidney stones, Charig et al., BMJ, 1986 (Simpson’s paradox).</p>
+<p class="center fragment" style="margin-top:14px;font-weight:650">Which table to trust is decided by the <span class="alert">causal graph</span>, not by the data.</p>
 </div></div>
-<aside class="notes">6:15. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones).</aside>
+<aside class="notes">6:15. Stone size is the confounder: doctors gave the heavy treatment to the hard cases. Seeing vs doing is the one concept to keep. This is Simpson's paradox.</aside>
 </section>
 
 <section class="s">
-<header><div class="kicker">Why causality?</div><h2>The same trap, in security logs</h2></header>
+<header><div class="kicker">Why causality?</div><h2>The same trap, in your logs</h2></header>
 <div class="sbody"><div class="fit">
-<div class="cols" style="align-items:center">
-  <div class="col" style="flex:.85">
-    <svg class="dag " viewBox="0 0 440 300" width="440" height="300"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="200.9" y1="79.0" x2="114.1" y2="211.0" marker-end="url(#ah)" /><line class="e hot" x1="239.1" y1="79.0" x2="325.9" y2="211.0" marker-end="url(#ah)" /><line class="e " x1="190.0" y1="240.0" x2="270.0" y2="240.0" marker-end="url(#ah)" /><rect class="n hot" x="85.0" y="26.0" width="270.0" height="48" rx="12"/><text x="220" y="51">Exposure of the machine</text><rect class="n " x="5.0" y="216.0" width="180.0" height="48" rx="12"/><text x="95" y="241">Agent installed</text><rect class="n " x="275.0" y="216.0" width="140.0" height="48" rx="12"/><text x="345" y="241">Incidents</text></svg>
-    <p class="center small muted" style="margin-top:10px">The agent goes first on the exposed machines: exposure is the <b style="color:var(--accent)">confounder</b>.</p>
-  </div>
-  <div class="col">
-    <p><b>The logs say:</b> machines with the security agent report <span class="alert">more</span> incidents than machines without it.</p>
-    <div class="two-q" style="margin-top:6px">
-      <div class="card t-blue"><span class="tag blue">Seeing</span><p class="small" style="margin:.5em 0 0 0">Among the machines with the agent, how many incidents?</p></div>
-      <div class="card t-red"><span class="tag red">Doing</span><p class="small" style="margin:.5em 0 0 0">If I install the agent on this machine, will it have fewer incidents?</p></div>
-    </div>
-  </div>
+<div class="cols" style="gap:24px">
+<div class="col"><div class="card t-gold" style="padding:14px 20px;text-align:center"><span class="tag gold">On the molding line</span><svg class="dag " viewBox="0 0 440 250" width="361" height="205"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="198.2" y1="69.0" x2="121.8" y2="171.0" marker-end="url(#ah)" /><line class="e hot" x1="242.7" y1="69.0" x2="322.3" y2="171.0" marker-end="url(#ah)" /><line class="e " x1="185.0" y1="200.0" x2="270.0" y2="200.0" marker-end="url(#ah)" /><rect class="n hot" x="105.0" y="16.0" width="230.0" height="48" rx="12"/><text x="220" y="41">Granulate moisture</text><rect class="n " x="20.0" y="176.0" width="160.0" height="48" rx="12"/><text x="100" y="201">Drying time</text><rect class="n " x="275.0" y="176.0" width="140.0" height="48" rx="12"/><text x="345" y="201">Good part</text></svg><p class="small" style="margin:.2em 0 .3em 0;text-align:left"><b>The logs say:</b> parts dried for 2 hours pass quality control <span class="alert">more</span> often than parts dried for 4.</p><p class="small muted" style="margin:0;text-align:left">Operators dry for longer when the granulate arrives humid.</p></div></div><div class="col"><div class="card t-blue" style="padding:14px 20px;text-align:center"><span class="tag blue">In security logs</span><svg class="dag " viewBox="0 0 440 250" width="361" height="205"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e hot" x1="198.2" y1="69.0" x2="121.8" y2="171.0" marker-end="url(#ah)" /><line class="e hot" x1="242.7" y1="69.0" x2="322.3" y2="171.0" marker-end="url(#ah)" /><line class="e " x1="195.0" y1="200.0" x2="270.0" y2="200.0" marker-end="url(#ah)" /><rect class="n hot" x="85.0" y="16.0" width="270.0" height="48" rx="12"/><text x="220" y="41">Exposure of the machine</text><rect class="n " x="10.0" y="176.0" width="180.0" height="48" rx="12"/><text x="100" y="201">Agent installed</text><rect class="n " x="275.0" y="176.0" width="140.0" height="48" rx="12"/><text x="345" y="201">Incidents</text></svg><p class="small" style="margin:.2em 0 .3em 0;text-align:left"><b>The logs say:</b> machines with the security agent report <span class="alert">more</span> incidents than machines without it.</p><p class="small muted" style="margin:0;text-align:left">The agent goes first on the exposed machines.</p></div></div>
 </div>
-<p class="center tiny muted" style="margin-top:6px">Illustrative example.</p>
+<div class="banner fragment">Same structure as the kidney stones: a <em>confounder</em> drives both the choice and the outcome.</div>
+<p class="center tiny muted" style="margin-top:6px">Illustrative examples.</p>
 </div></div>
-<aside class="notes">8:45. 45 seconds, for the security team: same structure, other logs. Illustrative example.</aside>
+<aside class="notes">8:45. 75 seconds. The same structure in your own logs: drying time on the molding line, the security agent on the machines. Both illustrative.</aside>
 </section>
 
 <section class="s onimg glass" data-background-image="img/pills_dark.jpg" data-background-size="cover" data-background-position="center" data-background-color="#0b132b" data-transition="fade">
@@ -197,7 +191,7 @@
 <p class="punch fragment" style="color:#fff;text-align:center">Accurate predictions, <em style="color:#ffb3bf">wrong decisions.</em></p>
 </div></div>
 <div class="credit">Photo: Yinan Chen (public domain), via Wikimedia Commons</div>
-<aside class="notes">9:30. 75 seconds. Three real cases where an accurate prediction led to a wrong decision. Pick two, do not read all three.</aside>
+<aside class="notes">10:00. 75 seconds. Three real cases where an accurate prediction led to a wrong decision. Pick two, do not read all three.</aside>
 </section>
 
 <section class="s">
@@ -214,7 +208,7 @@
 </div>
 <div class="banner fragment"><b>So we need the graph first.</b> Confounder or collider? The data alone look the same. Finding the graph from observations is <em>causal discovery</em>.</div>
 </div></div>
-<aside class="notes">10:45. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no.</aside>
+<aside class="notes">11:15. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no.</aside>
 </section>
 
 <section class="s">
@@ -234,7 +228,7 @@
 </div>
 <div class="banner fragment"><b>The recipe.</b> If a dependence disappears once we condition, the link was spurious: remove it. What survives every conditioning set is a candidate causal link. One question, asked many times: <em>is <span class="math inline">X \perp Y \mid Z</span>?</em></div>
 </div></div>
-<aside class="notes">12:15. Four structures, one question asked many times: is X independent of Y given Z?</aside>
+<aside class="notes">12:45. Four structures, one question asked many times: is X independent of Y given Z?</aside>
 </section>
 
 <section class="s top" data-transition="fade">
@@ -254,7 +248,7 @@
 </div>
 <span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span>
 </div></div>
-<aside class="notes">13:45. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 18:15.</aside>
+<aside class="notes">14:15. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 18:45.</aside>
 </section>
 
 <section class="s">
@@ -268,7 +262,7 @@
 </div>
 <p class="center small muted" style="margin-top:18px">This is <b>constraint-based</b> causal discovery: the PC algorithm (Spirtes and Glymour). Its time series version, PCMCI (Runge et al., 2019), is one of the most used methods today.</p>
 </div></div>
-<aside class="notes">18:15. Four cards, 15 seconds each. SKIP IF LATE.</aside>
+<aside class="notes">18:45. Four cards, 15 seconds each. SKIP IF LATE.</aside>
 </section>
 
 <section class="s">
@@ -294,7 +288,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p><strong>PCMCI</strong> is PC adapted to this setting: first select the candidate parents among the lags, then test each link conditioning on the parents of both ends.</p>
 
 </div></div>
-<aside class="notes">19:15. Sensors are time series: the arrow of time helps, the number of lags hurts.</aside>
+<aside class="notes">19:45. Sensors are time series: the arrow of time helps, the number of lags hurts.</aside>
 </section>
 
 <section class="s">
@@ -341,10 +335,10 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p>Each family bets on one assumption, and fails when the data break it.</p>
 
 </div></div>
-<aside class="notes">20:15. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you. SKIP IF LATE.</aside>
+<aside class="notes">20:45. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you. SKIP IF LATE.</aside>
 </section>
 
-<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Part 2 · results</div><h2>Does it help a real twin?</h2><p class="sub">Plastic injection molding, on data collected at Sirris. Then what we are building now.</p></div><aside class="notes">21:45. Breathe. Second half: results.</aside>
+<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Part 2 · results</div><h2>Does it help a real twin?</h2><p class="sub">Plastic injection molding, on data collected at Sirris. Then what we are building now.</p></div><aside class="notes">22:15. Breathe. Second half: results.</aside>
 </section>
 
 <section class="s">
@@ -367,7 +361,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <div class="banner fragment"><b>The test.</b> Train on four productions, predict the fifth. A new material or a new mold moves every sensor: <em>domain shift</em>.</div>
 <p class="src">Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. <i>PerCom Workshops</i>, 2025, and <i>Future Generation Computer Systems</i>, 2026. Written during my PhD, within ARIAC by DigitalWallonia4.ai. Parts counted after cleaning.</p>
 </div></div>
-<aside class="notes">22:15. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth.</aside>
+<aside class="notes">22:45. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth.</aside>
 </section>
 
 <section class="s">
@@ -396,7 +390,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <div class="banner fragment">Without being told, the algorithm found <em>4 of the 7</em> expert variables, and proposed the thermal ones.</div>
 </div></div>
-<aside class="notes">23:45. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones.</aside>
+<aside class="notes">24:15. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones.</aside>
 </section>
 
 <section class="s">
@@ -422,7 +416,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <p class="center fragment" style="margin-top:14px;font-weight:650">A hard task and small differences: the twin is limited by <span class="alert">how well we can find the graph</span>.</p>
 </div></div>
-<aside class="notes">25:15. Be honest: the differences are small. The message is: same accuracy with half of the sensors, chosen without an expert, and naive adaptation hurts. Third card is the bridge to the next part.</aside>
+<aside class="notes">25:45. Be honest: the differences are small. The message is: same accuracy with half of the sensors, chosen without an expert, and naive adaptation hurts. Third card is the bridge to the next part.</aside>
 </section>
 
 <section class="s">
@@ -441,7 +435,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <p class="src">TD2C: Paldino and Bontempi, <i>International Journal of Forecasting</i>, 2026. &nbsp;DTD2C: ongoing work, under review.</p>
 </div></div>
-<aside class="notes">27:45. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems.</aside>
+<aside class="notes">28:15. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems.</aside>
 </section>
 
 <section class="s top">
@@ -458,7 +452,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   </div>
 </div>
 </div></div>
-<aside class="notes">30:15. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
+<aside class="notes">30:45. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
 </section>
 
 <section class="s top">
@@ -476,7 +470,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <div class="banner fragment">No code, no install, no GPU. <em>Bring a file.</em></div>
 </div></div>
-<aside class="notes">32:15. The tool exists. Offer: send a CSV, or we run it together.</aside>
+<aside class="notes">32:45. The tool exists. Offer: send a CSV, or we run it together.</aside>
 </section>
 
 <section class="s">
@@ -489,7 +483,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we look for real datasets with a ground truth.</span></div>
 </div>
 </div></div>
-<aside class="notes">33:45. Four sentences, then the collaboration slide.</aside>
+<aside class="notes">34:15. Four sentences, then the collaboration slide.</aside>
 </section>
 
 <section class="s">
@@ -510,7 +504,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
     <p class="small" style="margin:.5em 0 0 0">A first test on one of your datasets. Then a master thesis, a PhD, or a joint project, as we did in ARIAC.</p></div></div>
 </div>
 </div></div>
-<aside class="notes">34:45. One minute, said plainly. We look for data (a lot), expert knowledge and a ground truth (DoE = design of experiments). Then what we bring and how to start: a first test on one dataset.</aside>
+<aside class="notes">35:15. One minute, said plainly. We look for data (a lot), expert knowledge and a ground truth (DoE = design of experiments). Then what we bring and how to start: a first test on one dataset.</aside>
 </section>
 
 <section class="hero" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="zoom">
@@ -519,7 +513,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="sub" style="margin-bottom:0">Questions, and data, are welcome.</div>
   <div class="meta" style="margin-top:28px">Gian Marco Paldino · Machine Learning Group, Université Libre de Bruxelles</div>
 </div>
-<aside class="notes">35:45. Questions.</aside>
+<aside class="notes">36:15. Questions.</aside>
 </section>
 
 <section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Backup</div><h2>More, if you ask</h2><p class="sub">Slides kept for the discussion.</p></div></section>
@@ -600,26 +594,26 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <section class="s">
 <header><div class="kicker">Backup</div><h2>How do we break a spurious correlation?</h2></header>
 <div class="sbody"><div class="fit">
-<p class="muted">The spurious part travels along Drying time ← Moisture → Good part. Two ways to block it:</p>
+<p class="muted">The spurious part travels along Treatment ← Stone size → Recovery. Two ways to block it:</p>
 <div class="grid2">
   <div class="card t-gold">
     <span class="tag gold">1 · Randomize</span><h3 style="margin-top:8px">Cut the arrow</h3>
-    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e cut u" x1="246.7" y1="63.0" x2="133.3" y2="149.0" /><line class="x" x1="181.0" y1="97.0" x2="199.0" y2="115.0"/><line class="x" x1="181.0" y1="115.0" x2="199.0" y2="97.0"/><line class="e hot" x1="67.0" y1="63.0" x2="88.0" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="294.1" y1="63.0" x2="320.9" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n " x="5.0" y="10.0" width="110.0" height="48" rx="12"/><text x="60" y="35">🪙 Coin</text><rect class="n " x="207.5" y="10.0" width="155.0" height="48" rx="12"/><text x="285" y="35">Moisture</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Drying time</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Good part</text></svg>
-    <p class="small" style="margin:.5em 0 0 0">A coin decides the drying time: both groups get the same mix of dry and humid granulate.</p>
+    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e cut u" x1="246.7" y1="63.0" x2="133.3" y2="149.0" /><line class="x" x1="181.0" y1="97.0" x2="199.0" y2="115.0"/><line class="x" x1="181.0" y1="115.0" x2="199.0" y2="97.0"/><line class="e hot" x1="67.0" y1="63.0" x2="88.0" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="294.1" y1="63.0" x2="320.9" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n " x="5.0" y="10.0" width="110.0" height="48" rx="12"/><text x="60" y="35">🪙 Coin</text><rect class="n " x="207.5" y="10.0" width="155.0" height="48" rx="12"/><text x="285" y="35">Stone size</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Treatment</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Recovery</text></svg>
+    <p class="small" style="margin:.5em 0 0 0">A coin decides who gets what: both groups get the same mix of stones.</p>
   </div>
   <div class="card t-teal">
     <span class="tag">2 · Condition</span><h3 style="margin-top:8px">Hold the confounder fixed</h3>
-    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="186.8" y1="63.0" x2="118.2" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="234.2" y1="63.0" x2="305.8" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n shade" x="132.5" y="10.0" width="155.0" height="48" rx="12"/><text x="210" y="35">Moisture</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Drying time</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Good part</text></svg>
+    <svg class="dag " viewBox="0 0 420 215" width="386" height="198"><defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs><line class="e " x1="186.8" y1="63.0" x2="118.2" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="234.2" y1="63.0" x2="305.8" y2="149.0" marker-end="url(#ah)" /><line class="e " x1="171.8" y1="178.0" x2="259.0" y2="178.0" marker-end="url(#ah)" /><rect class="n shade" x="132.5" y="10.0" width="155.0" height="48" rx="12"/><text x="210" y="35">Stone size</text><rect class="n " x="23.2" y="154.0" width="143.5" height="48" rx="12"/><text x="95" y="179">Treatment</text><rect class="n " x="264.0" y="154.0" width="132.0" height="48" rx="12"/><text x="330" y="179">Recovery</text></svg>
     <p class="small" style="margin:.5em 0 0 0">What the second table did. Then average the rows: <span class="math inline">P(y \mid do(t)) = \sum_z P(y \mid t, z)\,P(z)</span></p>
   </div>
 </div>
 <div class="card" style="margin-top:16px;padding:14px 24px">
-  <div class="swap"><span class="tag" data-from="0" data-to="0">Good parts · as observed</span><span class="tag green" data-from="1">Good parts · adjusted for moisture</span></div>
-  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colA">Long drying</span><div class="sbar" data-vals="79,85" data-min="60" data-max="90"><i></i></div><b class="bv colA" data-suf="%"></b></div>
-  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colB">Short drying</span><div class="sbar b" data-vals="85,78" data-min="60" data-max="90"><i></i></div><b class="bv colB" data-suf="%"></b></div>
+  <div class="swap"><span class="tag" data-from="0" data-to="0">Recovery rate · as observed</span><span class="tag green" data-from="1">Recovery rate · adjusted for stone size</span></div>
+  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colA">Treatment A</span><div class="sbar" data-vals="78,83" data-min="60" data-max="90"><i></i></div><b class="bv colA" data-suf="%"></b></div>
+  <div class="brow" style="grid-template-columns:130px 1fr 86px"><span class="bl colB">Treatment B</span><div class="sbar b" data-vals="83,78" data-min="60" data-max="90"><i></i></div><b class="bv colB" data-suf="%"></b></div>
   <span class="fragment ghost"></span>
 </div>
-<p class="center fragment" style="margin-top:10px;font-weight:650">Same data, same parts. <span class="alert">The ranking flips back.</span></p>
+<p class="center fragment" style="margin-top:10px;font-weight:650">Same data, same patients. <span class="alert">The ranking flips back.</span></p>
 </div></div>
 </section>
 
@@ -637,7 +631,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <div class="card t-teal fragment" style="margin-top:18px;text-align:center"><span class="tag">When the variables Z close every back-door path</span>
   <div style="font-size:30px;margin:.35em 0"><span class="math inline">E[Y \mid do(x)] = \sum_z E[Y \mid x, z]\,P(z)</span></div>
   <p class="small" style="margin:0">The same regression, with the right covariates, averaged over the population.</p></div>
-<p class="center small fragment" style="margin-top:12px">Drying time: quality on drying time alone says <b class="colB">short, by 6 points</b>. Adding moisture says <b class="colA">long, by 7.5 points</b>.</p>
+<p class="center small fragment" style="margin-top:12px">Kidney stones: recovery on treatment alone says <b class="colB">B, by 5 points</b>. Adding stone size says <b class="colA">A, by 5 points</b>.</p>
 <div class="banner fragment"><b>Do-calculus is not a new estimator.</b> It tells you <em>when</em> your regression answers the causal question.</div>
 </div></div>
 </section>

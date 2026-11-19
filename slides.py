@@ -174,25 +174,29 @@ CONFOUNDER = """
 """
 
 # ---------------------------------------------------------------- the same trap in security logs (illustrative)
+def _trap(tone, tag, nodes, says, why):
+    return ('<div class="col"><div class="card t-' + tone + '" style="padding:14px 20px;text-align:center"><span class="tag ' + tone + '">' + tag + '</span>'
+            + dag(440, 250, nodes, [("z", "t", "hot"), ("z", "y", "hot"), ("t", "y")], scale=0.82)
+            + '<p class="small" style="margin:.2em 0 .3em 0;text-align:left"><b>The logs say:</b> ' + says + '</p>'
+            + '<p class="small muted" style="margin:0;text-align:left">' + why + '</p></div></div>')
+
+
 SECURITY = """
 <section class="s">
-""" + head(K1, "The same trap, in security logs") + """
+""" + head(K1, "The same trap, in your logs") + """
 <div class="sbody"><div class="fit">
-<div class="cols" style="align-items:center">
-  <div class="col" style="flex:.85">
-    """ + dag(440, 300, {"z": (220, 50, "Exposure of the machine", "hot", 270), "t": (95, 240, "Agent installed", "", 180), "y": (345, 240, "Incidents", "", 140)},
-              [("z", "t", "hot"), ("z", "y", "hot"), ("t", "y")]) + """
-    <p class="center small muted" style="margin-top:10px">The agent goes first on the exposed machines: exposure is the <b style="color:var(--accent)">confounder</b>.</p>
-  </div>
-  <div class="col">
-    <p><b>The logs say:</b> machines with the security agent report <span class="alert">more</span> incidents than machines without it.</p>
-    <div class="two-q" style="margin-top:6px">
-      <div class="card t-blue"><span class="tag blue">Seeing</span><p class="small" style="margin:.5em 0 0 0">Among the machines with the agent, how many incidents?</p></div>
-      <div class="card t-red"><span class="tag red">Doing</span><p class="small" style="margin:.5em 0 0 0">If I install the agent on this machine, will it have fewer incidents?</p></div>
-    </div>
-  </div>
+<div class="cols" style="gap:24px">
+""" + _trap("gold", "On the molding line",
+            {"z": (220, 40, "Granulate moisture", "hot", 230), "t": (100, 200, "Drying time", "", 160), "y": (345, 200, "Good part", "", 140)},
+            'parts dried for 2 hours pass quality control <span class="alert">more</span> often than parts dried for 4.',
+            "Operators dry for longer when the granulate arrives humid.") \
+    + _trap("blue", "In security logs",
+            {"z": (220, 40, "Exposure of the machine", "hot", 270), "t": (100, 200, "Agent installed", "", 180), "y": (345, 200, "Incidents", "", 140)},
+            'machines with the security agent report <span class="alert">more</span> incidents than machines without it.',
+            "The agent goes first on the exposed machines.") + """
 </div>
-<p class="center tiny muted" style="margin-top:6px">Illustrative example.</p>
+<div class="banner fragment">Same structure as the kidney stones: a <em>confounder</em> drives both the choice and the outcome.</div>
+<p class="center tiny muted" style="margin-top:6px">Illustrative examples.</p>
 </div></div>
 </section>
 """

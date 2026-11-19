@@ -55,10 +55,10 @@ PLAN = [
     (S.WHO, "0:30. One minute. MLG, EDITS (WEL-T), me. Name the Sirris co-authors: the room knows them. The injection molding work comes back in the second half."),
     (S.PROJECTS, "0:30. 45 seconds. Three twins we build at MLG: traffic, energy communities, robotic hand. Do not read the cards."),
     (S.DT_WHATIF, "0:30. The definition is Gianluca's. Emulate and anticipate = prediction. Explain and control = the twin has to know what happens when IT changes something. That is the thread of the whole talk."),
-    (S.DIV_LINE, "2:00. Ask the room, wait for an answer. Do not explain anything yet."),
-    (S.CHAT, "2:30. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative."),
-    (S.CONFOUNDER, "4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones)."),
-    (S.SECURITY, "7:00. 45 seconds, for the security team: same structure, other logs. Illustrative example."),
+    (ks_class("divider", "You are the doctor"), "2:00. Ask the room, wait for an answer. Do not explain anything yet."),
+    (ks_class("s top", "Hey Claude, what do I do?"), "2:30. Click through quickly (6 clicks). The point: the same data give two opposite answers. Real data: kidney stones, Charig et al., 1986."),
+    (ks("Nothing is wrong with the data"), "4:30. Stone size is the confounder: doctors gave the heavy treatment to the hard cases. Seeing vs doing is the one concept to keep. This is Simpson's paradox."),
+    (S.SECURITY, "7:00. 75 seconds. The same structure in your own logs: drying time on the molding line, the security agent on the machines. Both illustrative."),
     (ks("When correlations made the decision"), "8:30. 75 seconds. Three real cases where an accurate prediction led to a wrong decision. Pick two, do not read all three."),
     (S.CATCH, "8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no."),
     (ks("Conditioning is also how we find the graph"), "11:00. Four structures, one question asked many times: is X independent of Y given Z?"),
@@ -90,17 +90,8 @@ PLAN = [
          "Drying time: we knew that moisture was the confounder, and computed the effect of the drying time."),
         ("Kidney stones: who told us that stone size comes before treatment, and not after?",
          "Drying time: who told us that moisture comes before the choice of the drying time, and not after?")]), ""),
-    (ks("How do we break a spurious correlation", kicker=BK, edits=[
-        ("Treatment ← Stone size → Recovery", "Drying time ← Moisture → Good part"),
-        (">Stone size</text>", ">Moisture</text>"), (">Treatment</text>", ">Drying time</text>"), (">Recovery</text>", ">Good part</text>"),
-        ("A coin decides who gets what: both groups get the same mix of stones.", "A coin decides the drying time: both groups get the same mix of dry and humid granulate."),
-        ("Recovery rate · as observed", "Good parts · as observed"), ("Recovery rate · adjusted for stone size", "Good parts · adjusted for moisture"),
-        (">Treatment A</span>", ">Long drying</span>"), (">Treatment B</span>", ">Short drying</span>"),
-        ('data-vals="78,83"', 'data-vals="79,85"'), ('data-vals="83,78"', 'data-vals="85,78"'),
-        ("Same data, same patients.", "Same data, same parts.")]), ""),
-    (ks("Predicting at a new", kicker=BK, edits=[
-        ('Kidney stones: recovery on treatment alone says <b class="colB">B, by 5 points</b>. Adding stone size says <b class="colA">A, by 5 points</b>.',
-         'Drying time: quality on drying time alone says <b class="colB">short, by 6 points</b>. Adding moisture says <b class="colA">long, by 7.5 points</b>.')]), ""),
+    (ks("How do we break a spurious correlation", kicker=BK), ""),
+    (ks("Predicting at a new", kicker=BK), ""),
     (S.IM_ADAPT, ""),
     (ks("The Traditional Toolbox: Approach 1", kicker=BK), ""),
     (ks("The Traditional Toolbox: Approach 2", kicker=BK), ""),
@@ -148,12 +139,12 @@ TEMPLATE = """<!doctype html>
 
 
 # Changes made after the notes were timed: seconds by which every clock time AFTER the slide with that title is shifted.
-# Added: who is talking (60 s), MLG projects (45 s), security example (45 s), the medical cases (75 s), the collaboration slide (60 s).
+# Added: who is talking (60 s), MLG projects (45 s), the slide with the drying and security examples (75 s), the medical cases (75 s), the collaboration slide (60 s).
 # Moved to the backup: the ladder (90 s, came after the security slide), inference vs discovery (60 s), the rivers (90 s), where it breaks (90 s), where causality sits in the twin (90 s).
 SHIFT_AFTER = {
     "A machine learning lab that builds digital twins": 60,
     "from the grid to the hand": 45,
-    "The same trap, in security logs": 45 - 90,
+    "The same trap, in your logs": 75 - 90,
     "When correlations made the decision": 75,
     "Two ways out, and a catch": -60,
     "When this is on the table, we are interested": 60,
