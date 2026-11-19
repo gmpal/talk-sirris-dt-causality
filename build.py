@@ -51,25 +51,27 @@ BK = "Backup"
 
 # (slide, speaker note). The note opens with the clock time at which the slide should START.
 PLAN = [
-    (S.TITLE, "0:00. One sentence on who I am: postdoc at MLG (ULB), causality and digital twins in the WEL-T project. We already worked together on injection molding: it comes back in the second half."),
+    (S.TITLE, "0:00. Thank Henrique and Nicolas for the invitation. Then next slide."),
+    (S.WHO, "0:30. One minute. MLG, EDITS (WEL-T), me. Name the Sirris co-authors: the room knows them. The injection molding work comes back in the second half."),
     (S.DT_WHATIF, "0:30. The definition is Gianluca's. Emulate and anticipate = prediction. Explain and control = the twin has to know what happens when IT changes something. That is the thread of the whole talk."),
     (S.DIV_LINE, "2:00. Ask the room, wait for an answer. Do not explain anything yet."),
     (S.CHAT, "2:30. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative."),
     (S.CONFOUNDER, "4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones)."),
+    (S.SECURITY, "7:00. 45 seconds, for the security team: same structure, other logs. Illustrative example."),
     (S.DT_LADDER, "7:00. Most data-driven twins are on rung 1. What-if and root cause are rungs 2 and 3: they need a graph."),
     (S.CATCH, "8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no."),
     (ks("Two different problems", edits=[
         ("Kidney stones: we knew stone size was the confounder, and computed the effect of the treatment.",
          "Drying time: we knew that moisture was the confounder, and computed the effect of the drying time."),
         ("Kidney stones: who told us that stone size comes before treatment, and not after?",
-         "Drying time: who told us that moisture comes before the choice of the drying time, and not after?")]), "10:00. Short. Discovery gives the graph, inference uses it. From here on: discovery."),
+         "Drying time: who told us that moisture comes before the choice of the drying time, and not after?")]), "10:00. Short. Discovery gives the graph, inference uses it. From here on: discovery. SKIP IF LATE."),
     (ks("Conditioning is also how we find the graph"), "11:00. Four structures, one question asked many times: is X independent of Y given Z?"),
     (ks("Let's discover a graph by hand"), "12:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 17:00."),
     (ks("It worked. What did we assume"), "17:00. Four cards, 15 seconds each. SKIP IF LATE."),
     (ks("What changes with time", kicker="Time series"), "18:00. Sensors are time series: the arrow of time helps, the number of lags hurts."),
     (ks("The traditional toolbox, in one slide", rename="The classical toolbox, in one slide", kicker="Time series",
         edits=[(" Let’s look at them one by one.", "")]),
-     "19:00. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you."),
+     "19:00. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you. SKIP IF LATE."),
     (S.DIV_IM, "20:30. Breathe. Second half: results."),
     (S.IM_SETUP, "21:00. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth."),
     (S.IM_FEATURES, "22:30. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones."),
@@ -80,7 +82,7 @@ PLAN = [
     (ks("A real case: 42 river stations", kicker=RES), "31:00. Real data, never seen. 10 of 42 right; the mistakes are all inside the same basin. SKIP IF LATE."),
     (ks("Where it breaks, and why", kicker=RES), "32:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases."),
     (S.DASHBOARD, "34:00. The tool exists. Offer: send a CSV, or we run it together."),
-    (S.DT_LOOP, "35:30. Where each piece sits in a twin, and what we would like from this meeting."),
+    (S.DT_LOOP, "35:30. Where each piece sits in a twin. Then the ask, said plainly: datasets with a ground truth (DoE = design of experiments, tagged events, known structure). What we bring in exchange."),
     (S.TAKEHOME, "37:00. Four sentences. Stop at 38:00, two minutes of margin."),
     (S.THANKS, "38:00. Questions."),
     # ------------------------------------------------------------------ backup
@@ -121,7 +123,7 @@ TEMPLATE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Causality for Digital Twins</title>
+<title>From Correlation to Intervention: Causal AI for Trustworthy Digital Twins</title>
 <link rel="stylesheet" href="vendor/reveal/dist/reset.css">
 <link rel="stylesheet" href="vendor/reveal/dist/reveal.css">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
@@ -143,6 +145,24 @@ TEMPLATE = """<!doctype html>
 """
 
 
+# Slides added after the notes were timed: seconds each one takes. Every later clock time is shifted.
+ADDED = {id(S.WHO): 60, id(S.SECURITY): 45}
+
+
+def clock(note, shift):
+    def f(m):
+        t = int(m.group(1)) * 60 + int(m.group(2)) + shift
+        return f"{t // 60}:{t % 60:02d}"
+    return re.sub(r"\b(\d{1,2}):(\d{2})\b", f, note)
+
+
+def timed(plan):
+    shift = 0
+    for h, n in plan:
+        yield h, clock(n, shift)
+        shift += ADDED.get(id(h), 0)
+
+
 def with_note(html, note):
     html = html.strip()
     if not note:
@@ -152,7 +172,7 @@ def with_note(html, note):
 
 
 if __name__ == "__main__":
-    out = "\n\n".join(with_note(h, n) for h, n in PLAN)
+    out = "\n\n".join(with_note(h, n) for h, n in timed(PLAN))
     open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(TEMPLATE.replace("{{SLIDES}}", out))
     for kind in ("img", "fig", "figures"):
         for f in set(re.findall(rf'(?:src|data-background-image)="{kind}/([^"]+)"', out)):

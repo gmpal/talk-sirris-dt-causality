@@ -11,10 +11,32 @@ KPT = "Pretrained causal discovery"
 GRAD = 'data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)"'
 
 # ---------------------------------------------------------------- title
-TITLE = custom.TITLE.replace("From Correlation to Causal Discovery", "Causality for Digital Twins") \
-    .replace("An introduction, with a focus on time series", "From correlation to “what if?”, with results on industrial time series") \
+TITLE = custom.TITLE.replace("From Correlation to Causal Discovery", "From Correlation to Intervention") \
+    .replace("An introduction, with a focus on time series", "Causal AI for Trustworthy Digital Twins") \
     .replace("MLG Knowledge Sharing &nbsp;·&nbsp; 17 November 2026", "Sirris &nbsp;·&nbsp; 19 November 2026")
-assert "Sirris" in TITLE and "Causality for Digital Twins" in TITLE
+assert "Sirris" in TITLE and "From Correlation to Intervention" in TITLE and "Causal AI for Trustworthy Digital Twins" in TITLE
+
+# ---------------------------------------------------------------- who is talking
+# MLG: mlg.ulb.ac.be. EDITS: ulb-mlg.github.io/welt_website. ARIAC: grant 2010235, SPW Recherche.
+WHO = """
+<section class="s">
+""" + head("Who is talking", "A machine learning lab that builds digital twins") + """
+<div class="sbody"><div class="fit">
+<div class="grid3">
+  <div class="card t-blue" style="padding:16px 20px"><span class="tag blue">The lab</span><h3 style="margin-top:.4em">Machine Learning Group, ULB</h3>
+    <p class="small" style="margin:0">Founded in 2004 by Gianluca Bontempi, co-headed with Tom Lenaerts.<br>Time series and streaming sensor data, forecasting, anomaly and fraud detection, causal inference.</p></div>
+  <div class="card t-gold" style="padding:16px 20px"><span class="tag gold">The project</span><h3 style="margin-top:.4em">EDITS · 2025–2029</h3>
+    <p class="small" style="margin:0"><i>Enhancing Digital Twins with Scalable and Interpretable AI</i>, funded by the F.R.S.-FNRS WEL-T programme.<br>Twins of a city's traffic, of a wind farm, of a robotic arm.</p></div>
+  <div class="card t-red" style="padding:16px 20px"><span class="tag red">Me</span><h3 style="margin-top:.4em">Gian Marco Paldino</h3>
+    <p class="small" style="margin:0">PhD at MLG (2026), within <b>ARIAC</b> by DigitalWallonia4.ai.<br>Now postdoc on EDITS: causal discovery in time series.<br><span class="muted">Not a process engineer, and not a security analyst.</span></p></div>
+</div>
+<div class="card fragment" style="margin-top:20px;padding:14px 24px"><span class="tag green">We already work together</span>
+  <p class="small" style="margin:.5em 0 0 0">The injection molding results of this talk come from ARIAC, on data produced at Sirris, with
+  <b>Olivier Caelen</b>, <b>Marouene Oueslati</b> and <b>Marc Ansay</b>, and Tojo Valisoa Andrianandrianina Johanesa (UMONS). A follow-up with <b>Pierre Dagnely</b> is under review.</p></div>
+<div class="banner fragment">We bring the methods. <em>The problems and the data are yours.</em></div>
+</div></div>
+</section>
+"""
 
 # ---------------------------------------------------------------- the twin has to answer "what if?"
 _LOOP = """
@@ -127,6 +149,31 @@ CONFOUNDER = """
 </section>
 """
 
+# ---------------------------------------------------------------- the same trap in security logs (illustrative)
+SECURITY = """
+<section class="s">
+""" + head(K1, "The same trap, in security logs") + """
+<div class="sbody"><div class="fit">
+<div class="cols" style="align-items:center">
+  <div class="col" style="flex:.85">
+    """ + dag(440, 300, {"z": (220, 50, "Exposure of the machine", "hot", 270), "t": (95, 240, "Agent installed", "", 180), "y": (345, 240, "Incidents", "", 140)},
+              [("z", "t", "hot"), ("z", "y", "hot"), ("t", "y")]) + """
+    <p class="center small muted" style="margin-top:10px">The agent goes first on the exposed machines: exposure is the <b style="color:var(--accent)">confounder</b>.</p>
+  </div>
+  <div class="col">
+    <p><b>The logs say:</b> machines with the security agent report <span class="alert">more</span> incidents than machines without it.</p>
+    <div class="two-q" style="margin-top:6px">
+      <div class="card t-blue"><span class="tag blue">Seeing</span><p class="small" style="margin:.5em 0 0 0">Among the machines with the agent, how many incidents?</p></div>
+      <div class="card t-red"><span class="tag red">Doing</span><p class="small" style="margin:.5em 0 0 0">If I install the agent on this machine, will it have fewer incidents?</p></div>
+    </div>
+  </div>
+</div>
+<div class="banner fragment"><b>And root cause.</b> One wrong firewall rule, three hundred alerts in an hour: all correlated, <em>one cause</em>.</div>
+<p class="center tiny muted" style="margin-top:6px">Illustrative example.</p>
+</div></div>
+</section>
+"""
+
 # ---------------------------------------------------------------- ladder of causation, for a twin
 DT_LADDER = """
 <section class="s">
@@ -180,7 +227,7 @@ IM_SETUP = """
   </div>
 </div>
 <div class="banner fragment"><b>The test.</b> Train on four productions, predict the fifth. A new material or a new mold moves every sensor: <em>domain shift</em>.</div>
-<p class="src">Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. <i>Future Generation Computer Systems</i>, 2026. Parts counted after cleaning.</p>
+<p class="src">Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. <i>PerCom Workshops</i>, 2025, and <i>Future Generation Computer Systems</i>, 2026. Written during my PhD, within ARIAC by DigitalWallonia4.ai. Parts counted after cleaning.</p>
 </div></div>
 </section>
 """
@@ -322,11 +369,13 @@ DT_LOOP = """
     <div class="use"><i class="tag gold">next</i><b>Root cause</b><span>explain an alarm to the operator</span></div>
   </div>
 </div>
-<div class="card t-red fragment" style="margin-top:22px;padding:16px 24px"><span class="tag red">What we would like to discuss</span>
-  <div class="grid2" style="gap:8px 34px;margin-top:8px">
-    <p class="small" style="margin:0"><b>Data with known interventions.</b> A DoE campaign is ground truth for causal discovery: we can check the graph against what you changed on purpose.</p>
-    <p class="small" style="margin:0"><b>Larger systems.</b> A line with hundreds of sensors, where today nobody can draw the graph by hand.</p>
+<div class="card t-red fragment" style="margin-top:22px;padding:16px 24px"><span class="tag red">What a university lab is always looking for: data with a ground truth</span>
+  <div class="grid3" style="gap:8px 30px;margin-top:10px">
+    <p class="small" style="margin:0"><b>Known interventions.</b> Designed experiments (DoE), logged changes of set-point: we check the graph against what you changed on purpose.</p>
+    <p class="small" style="margin:0"><b>Tagged events.</b> Faults, alarms or attacks labelled with their root cause, by an operator or an analyst.</p>
+    <p class="small" style="margin:0"><b>A known structure.</b> A process diagram or a network topology, on systems with hundreds of sensors.</p>
   </div>
+  <p class="small" style="margin:10px 0 0 0"><b>What we bring:</b> the methods, the tool, the computing, and joint papers and projects, as we did in ARIAC.</p>
 </div>
 </div></div>
 </section>
@@ -340,7 +389,7 @@ TAKEHOME = """
   <div class="fragment fade-up"><span><b>Seeing is not doing.</b> A twin that only predicts tells you what happens if nothing changes. A twin that acts needs the causal graph.</span></div>
   <div class="fragment fade-up"><span><b>The graph can be learned from logged data.</b> By conditioning, one test at a time. It works under assumptions, and tests fail.</span></div>
   <div class="fragment fade-up"><span><b>Injection molding:</b> causal selection recovers most of the expert's choice and keeps the accuracy with half of the sensors. Naive adaptation hurts.</span></div>
-  <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we need real industrial cases.</span></div>
+  <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we look for real datasets with a ground truth.</span></div>
 </div>
 </div></div>
 </section>
@@ -363,13 +412,16 @@ REFS = """
 """ + head("Backup", "References and credits") + """
 <div class="sbody"><div class="fit">
 <ul class="small">
+<li>Paldino, Caelen, Oueslati, Ansay, Andrianandrianina Johanesa, Bontempi. Integrating domain adaptation and causal discovery in digital twins for plastic injection molding. <i>IEEE PerCom Workshops</i>, 2025.</li>
 <li>Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. On the integration of domain adaptation and causal discovery in digital twins: a case study for plastic injection molding. <i>Future Generation Computer Systems</i>, 2026.</li>
+<li>Oueslati, with Caelen, Dagnely, Andrianandrianina Johanesa, Ansay and Paldino. A follow-up study on the drying data. Submitted, 2026.</li>
 <li>Paldino, Bontempi. Causal discovery in multivariate time series through mutual information featurization. <i>International Journal of Forecasting</i>, 2026.</li>
 <li>Paldino, Bontempi. DTD2C: ongoing work, under review.</li>
 <li>Runge et al. Detecting and quantifying causal associations in large nonlinear time series datasets (PCMCI). <i>Science Advances</i>, 2019.</li>
 <li>Charig et al. Comparison of treatment of renal calculi. <i>BMJ</i>, 1986.</li>
 <li>Pearl, Mackenzie. <i>The Book of Why</i>. 2018.</li>
 </ul>
+<p class="tiny muted">The injection molding work was supported by Service Public de Wallonie Recherche, grant 2010235, ARIAC by DigitalWallonia4.ai. EDITS is funded by the F.R.S.-FNRS WEL-T programme.</p>
 <p class="tiny muted">Photos. Medicine bottle: Yinan Chen, public domain. Lawn sprinkler: Pixel.la, CC0 (all via Wikimedia Commons). Molded parts: from the FGCS paper, produced at Sirris.</p>
 </div></div>
 </section>
