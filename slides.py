@@ -13,7 +13,9 @@ GRAD = 'data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,
 # ---------------------------------------------------------------- title
 TITLE = custom.TITLE.replace("From Correlation to Causal Discovery", "From Correlation to Intervention") \
     .replace("An introduction, with a focus on time series", "Causal AI for Trustworthy Digital Twins") \
-    .replace("MLG Knowledge Sharing &nbsp;·&nbsp; 17 November 2026", "Sirris &nbsp;·&nbsp; 19 November 2026")
+    .replace("MLG Knowledge Sharing &nbsp;·&nbsp; 17 November 2026", "Sirris &nbsp;·&nbsp; 19 November 2026") \
+    .replace('<div class="who">Gian Marco Paldino</div>', '<div class="who">Gian Marco Paldino <span style="font-weight:400;opacity:.75">&nbsp;·&nbsp; with Gianluca Bontempi</span></div>')
+assert "with Gianluca Bontempi" in TITLE
 assert "Sirris" in TITLE and "From Correlation to Intervention" in TITLE and "Causal AI for Trustworthy Digital Twins" in TITLE
 
 # ---------------------------------------------------------------- who is talking
@@ -32,8 +34,31 @@ WHO = """
 </div>
 <div class="card fragment" style="margin-top:20px;padding:14px 24px"><span class="tag green">We already work together</span>
   <p class="small" style="margin:.5em 0 0 0">The injection molding results of this talk come from ARIAC, on data produced at Sirris, with
-  <b>Olivier Caelen</b>, <b>Marouene Oueslati</b> and <b>Marc Ansay</b>, and Tojo Valisoa Andrianandrianina Johanesa (UMONS). A follow-up with <b>Pierre Dagnely</b> is under review.</p></div>
+  <b>Olivier Caelen</b>, <b>Marouene Oueslati</b>, <b>Marc Ansay</b>, <b>Pierre Dagnely</b> and Tojo Johanesa.</p></div>
 <div class="banner fragment">We bring the methods. <em>The problems and the data are yours.</em></div>
+</div></div>
+</section>
+"""
+
+# ---------------------------------------------------------------- twins built at MLG (from the FestIA 2026 deck)
+def _proj(tone, area, name, text, fact, img):
+    return (f'<div class="card t-{tone} proj"><span class="tag {tone}">{area}</span><h3>{name}</h3>'
+            f'<p class="small">{text}</p><p class="small muted">{fact}</p><img{" class=whole" if img.endswith(".png") else ""} src="img/{img}"></div>')
+
+
+PROJECTS = """
+<section class="s">
+""" + head("Examples at MLG", "Digital twins, from the grid to the hand") + """
+<div class="sbody"><div class="fit">
+<div class="grid3">
+""" + _proj("blue", "Mobility", "TrafficTwin · Brussels, Namur", "Simulate a street closure or a change in public transport, and see the impact before deciding.",
+            "Real traffic data plus synthetic data.", "mlg_traffic.jpg") \
+    + _proj("gold", "Energy", "Energy communities", "A virtual power plant: forecast solar, consumption and EV charging, then drive the shared battery.",
+            "2,400 Belgian meters (Fluvius): up to 14% lower cost.", "mlg_energy.jpg") \
+    + _proj("red", "Robotics", "Robotic hand", "Drive a robotic hand from muscle signals (EMG): less effort and fewer injuries for the operator.",
+            "The twin of the workstation tests what-if scenarios in real time.", "mlg_hand.png") + """
+</div>
+<div class="logos"><img src="img/logo_ulb.png"><img src="img/logo_mlg.png"><img src="img/logo_welt.jpg"></div>
 </div></div>
 </section>
 """

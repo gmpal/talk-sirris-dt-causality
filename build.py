@@ -53,12 +53,12 @@ BK = "Backup"
 PLAN = [
     (S.TITLE, "0:00. Thank Henrique and Nicolas for the invitation. Then next slide."),
     (S.WHO, "0:30. One minute. MLG, EDITS (WEL-T), me. Name the Sirris co-authors: the room knows them. The injection molding work comes back in the second half."),
+    (S.PROJECTS, "0:30. 45 seconds. Three twins we build at MLG: traffic, energy communities, robotic hand. Do not read the cards."),
     (S.DT_WHATIF, "0:30. The definition is Gianluca's. Emulate and anticipate = prediction. Explain and control = the twin has to know what happens when IT changes something. That is the thread of the whole talk."),
     (S.DIV_LINE, "2:00. Ask the room, wait for an answer. Do not explain anything yet."),
     (S.CHAT, "2:30. Click through quickly (6 clicks). The point: the same logs give two opposite answers. Numbers are illustrative."),
     (S.CONFOUNDER, "4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones)."),
     (S.SECURITY, "7:00. 45 seconds, for the security team: same structure, other logs. Illustrative example."),
-    (S.DT_LADDER, "7:00. Most data-driven twins are on rung 1. What-if and root cause are rungs 2 and 3: they need a graph."),
     (S.CATCH, "8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no."),
     (ks("Two different problems", edits=[
         ("Kidney stones: we knew stone size was the confounder, and computed the effect of the treatment.",
@@ -87,6 +87,7 @@ PLAN = [
     (S.THANKS, "38:00. Questions."),
     # ------------------------------------------------------------------ backup
     (S.DIV_BACKUP, ""),
+    (S.DT_LADDER, ""),
     (ks("How do we break a spurious correlation", kicker=BK, edits=[
         ("Treatment ← Stone size → Recovery", "Drying time ← Moisture → Good part"),
         (">Stone size</text>", ">Moisture</text>"), (">Treatment</text>", ">Drying time</text>"), (">Recovery</text>", ">Good part</text>"),
@@ -145,8 +146,9 @@ TEMPLATE = """<!doctype html>
 """
 
 
-# Slides added after the notes were timed: seconds each one takes. Every later clock time is shifted.
-ADDED = {id(S.WHO): 60, id(S.SECURITY): 45}
+# Changes made after the notes were timed: seconds by which every clock time AFTER the slide is shifted.
+# WHO, PROJECTS and SECURITY were added (60, 45 and 45 s); the ladder (90 s) was moved to the backup, it came after SECURITY.
+ADDED = {id(S.WHO): 60, id(S.PROJECTS): 45, id(S.SECURITY): 45 - 90}
 
 
 def clock(note, shift):
