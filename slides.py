@@ -14,8 +14,8 @@ GRAD = 'data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,
 TITLE = custom.TITLE.replace("From Correlation to Causal Discovery", "From Correlation to Intervention") \
     .replace("An introduction, with a focus on time series", "Causal AI for Trustworthy Digital Twins") \
     .replace("MLG Knowledge Sharing &nbsp;·&nbsp; 17 November 2026", "Sirris &nbsp;·&nbsp; 19 November 2026") \
-    .replace('<div class="who">Gian Marco Paldino</div>', '<div class="who">Gian Marco Paldino <span style="font-weight:400;opacity:.75">&nbsp;·&nbsp; with Gianluca Bontempi</span></div>')
-assert "with Gianluca Bontempi" in TITLE
+    .replace('<div class="who">Gian Marco Paldino</div>', '<div class="who">Gian Marco Paldino, Gianluca Bontempi</div>')
+assert "Gian Marco Paldino, Gianluca Bontempi" in TITLE
 assert "Sirris" in TITLE and "From Correlation to Intervention" in TITLE and "Causal AI for Trustworthy Digital Twins" in TITLE
 
 # ---------------------------------------------------------------- who is talking
