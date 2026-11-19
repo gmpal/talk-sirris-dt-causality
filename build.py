@@ -77,8 +77,9 @@ PLAN = [
      "29:00. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160."),
     (ks("Where it breaks, and why", kicker=RES), "32:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases."),
     (S.DASHBOARD, "34:00. The tool exists. Offer: send a CSV, or we run it together."),
-    (S.DT_LOOP, "35:30. Where each piece sits in a twin. Then the ask, said plainly: datasets with a ground truth (DoE = design of experiments, tagged events, known structure). What we bring in exchange."),
-    (S.TAKEHOME, "37:00. Four sentences. Stop at 38:00, two minutes of margin."),
+    (S.DT_LOOP, "35:30. 45 seconds. Where each piece sits in a twin: one done, two next. The ask comes after the take-home."),
+    (S.TAKEHOME, "37:00. Four sentences, then the collaboration slide."),
+    (S.COLLAB, "38:00. One minute, said plainly. We look for data (a lot), expert knowledge and a ground truth (DoE = design of experiments). Then what we bring and how to start: a first test on one dataset."),
     (S.THANKS, "38:00. Questions."),
     # ------------------------------------------------------------------ backup
     (S.DIV_BACKUP, ""),
@@ -147,7 +148,7 @@ TEMPLATE = """<!doctype html>
 
 
 # Changes made after the notes were timed: seconds by which every clock time AFTER the slide with that title is shifted.
-# Added: who is talking (60 s), MLG projects (45 s), security example (45 s), the medical cases (75 s).
+# Added: who is talking (60 s), MLG projects (45 s), security example (45 s), the medical cases (75 s), the collaboration slide (60 s, with 45 s taken from the slide on the twin).
 # Moved to the backup: the ladder (90 s, came after the security slide), inference vs discovery (60 s), the rivers (90 s).
 SHIFT_AFTER = {
     "A machine learning lab that builds digital twins": 60,
@@ -155,6 +156,8 @@ SHIFT_AFTER = {
     "The same trap, in security logs": 45 - 90,
     "When correlations made the decision": 75,
     "Two ways out, and a catch": -60,
+    "Where causality sits in the twin": -45,
+    "When this is on the table, we are interested": 60,
     "Trained up to 40 variables, tested up to 1000": -90,
 }
 

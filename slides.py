@@ -392,13 +392,29 @@ DT_LOOP = """
     <div class="use"><i class="tag gold">next</i><b>Root cause</b><span>explain an alarm to the operator</span></div>
   </div>
 </div>
-<div class="card t-red fragment" style="margin-top:22px;padding:16px 24px"><span class="tag red">What a university lab is always looking for: data with a ground truth</span>
-  <div class="grid3" style="gap:8px 30px;margin-top:10px">
-    <p class="small" style="margin:0"><b>Known interventions.</b> Designed experiments (DoE), logged changes of set-point: we check the graph against what you changed on purpose.</p>
-    <p class="small" style="margin:0"><b>Tagged events.</b> Faults, alarms or attacks labelled with their root cause, by an operator or an analyst.</p>
-    <p class="small" style="margin:0"><b>A known structure.</b> A process diagram or a network topology, on systems with hundreds of sensors.</p>
-  </div>
-  <p class="small" style="margin:10px 0 0 0"><b>What we bring:</b> the methods, the tool, the computing, and joint papers and projects, as we did in ARIAC.</p>
+<div class="banner fragment">The graph is discovered from the data and <em>corrected by the expert</em>. We need both.</div>
+</div></div>
+</section>
+"""
+
+# ---------------------------------------------------------------- the collaboration we look for
+COLLAB = """
+<section class="s">
+""" + head("Working together", "When this is on the table, we are interested") + """
+<div class="sbody"><div class="fit">
+<div class="grid3">
+  <div class="card t-blue" style="padding:16px 20px"><div class="ico">🗄️</div><h3>Data, a lot of it</h3>
+    <p class="small" style="margin:0">Sensor logs and time series: many variables, long histories, streaming or stored. The messier, the more realistic.</p></div>
+  <div class="card t-gold" style="padding:16px 20px"><div class="ico">🧑‍🔧</div><h3>Expert knowledge</h3>
+    <p class="small" style="margin:0">Someone who knows the process: which variables matter, what a fault looks like, which arrows cannot exist.</p></div>
+  <div class="card t-red" style="padding:16px 20px"><div class="ico">🎯</div><h3>A ground truth</h3>
+    <p class="small" style="margin:0">Designed experiments (DoE), logged changes of set-point, events tagged with their root cause, a known process diagram.</p></div>
+</div>
+<div class="cols fragment" style="margin-top:20px;gap:22px">
+  <div class="col"><div class="card" style="padding:14px 22px"><span class="tag green">What we bring</span>
+    <p class="small" style="margin:.5em 0 0 0">Methods for causal discovery, forecasting, anomaly detection and domain adaptation. The tool, the computing, and the time to write it up.</p></div></div>
+  <div class="col"><div class="card" style="padding:14px 22px"><span class="tag green">How it can start</span>
+    <p class="small" style="margin:.5em 0 0 0">A first test on one of your datasets. Then a master thesis, a PhD, or a joint project, as we did in ARIAC.</p></div></div>
 </div>
 </div></div>
 </section>
