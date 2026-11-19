@@ -196,27 +196,6 @@
 </section>
 
 <section class="s">
-<header><div class="kicker">Why causality?</div><h2>Two different problems: inference and discovery</h2></header>
-<div class="sbody"><div class="fit">
-<div class="grid2">
-  <div class="card t-blue"><span class="tag blue">Causal inference</span><h3 style="margin-top:10px">The graph is given.</h3>
-    <p><i>How much</i> does X change Y?</p>
-    <p class="small muted">Drying time: we knew that moisture was the confounder, and computed the effect of the drying time.</p>
-    <p style="margin:0"><b>Output:</b> a number (an effect).</p></div>
-  <div class="card t-red"><span class="tag red">Causal discovery</span><h3 style="margin-top:10px">The graph is the unknown.</h3>
-    <p><i>What</i> causes what?</p>
-    <p class="small muted">Drying time: who told us that moisture comes before the choice of the drying time, and not after?</p>
-    <p style="margin:0"><b>Output:</b> a graph.</p></div>
-</div>
-<div class="flow">
-  <div class="box">data</div><div class="arrow">discovery</div><div class="box" style="border-color:var(--accent);color:var(--accent)">graph</div><div class="arrow">inference</div><div class="box">effect of an action</div>
-</div>
-<p class="center fragment" style="margin-top:16px">Until now we did inference, with a graph we took for granted. <b>The rest of this talk is about discovery.</b></p>
-</div></div>
-<aside class="notes">11:00. Short. Discovery gives the graph, inference uses it. From here on: discovery. SKIP IF LATE.</aside>
-</section>
-
-<section class="s">
 <header><div class="kicker">Why causality?</div><h2>Conditioning is also how we find the graph</h2></header>
 <div class="sbody"><div class="fit">
 <p class="muted">We do not know the graph, but each structure reacts differently when we condition on Z:</p>
@@ -233,7 +212,7 @@
 </div>
 <div class="banner fragment"><b>The recipe.</b> If a dependence disappears once we condition, the link was spurious: remove it. What survives every conditioning set is a candidate causal link. One question, asked many times: <em>is <span class="math inline">X \perp Y \mid Z</span>?</em></div>
 </div></div>
-<aside class="notes">12:00. Four structures, one question asked many times: is X independent of Y given Z?</aside>
+<aside class="notes">11:00. Four structures, one question asked many times: is X independent of Y given Z?</aside>
 </section>
 
 <section class="s top" data-transition="fade">
@@ -253,7 +232,7 @@
 </div>
 <span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span><span class="fragment ghost"></span>
 </div></div>
-<aside class="notes">13:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 18:00.</aside>
+<aside class="notes">12:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 17:00.</aside>
 </section>
 
 <section class="s">
@@ -267,7 +246,7 @@
 </div>
 <p class="center small muted" style="margin-top:18px">This is <b>constraint-based</b> causal discovery: the PC algorithm (Spirtes and Glymour). Its time series version, PCMCI (Runge et al., 2019), is one of the most used methods today.</p>
 </div></div>
-<aside class="notes">18:00. Four cards, 15 seconds each. SKIP IF LATE.</aside>
+<aside class="notes">17:00. Four cards, 15 seconds each. SKIP IF LATE.</aside>
 </section>
 
 <section class="s">
@@ -293,7 +272,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p><strong>PCMCI</strong> is PC adapted to this setting: first select the candidate parents among the lags, then test each link conditioning on the parents of both ends.</p>
 
 </div></div>
-<aside class="notes">19:00. Sensors are time series: the arrow of time helps, the number of lags hurts.</aside>
+<aside class="notes">18:00. Sensors are time series: the arrow of time helps, the number of lags hurts.</aside>
 </section>
 
 <section class="s">
@@ -340,10 +319,10 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p>Each family bets on one assumption, and fails when the data break it.</p>
 
 </div></div>
-<aside class="notes">20:00. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you. SKIP IF LATE.</aside>
+<aside class="notes">19:00. Do not read the table. One sentence: every family bets on one assumption. PCMCI is the one we used with you. SKIP IF LATE.</aside>
 </section>
 
-<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Part 2 · results</div><h2>Does it help a real twin?</h2><p class="sub">Plastic injection molding, on data collected at Sirris. Then what we are building now.</p></div><aside class="notes">21:30. Breathe. Second half: results.</aside>
+<section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Part 2 · results</div><h2>Does it help a real twin?</h2><p class="sub">Plastic injection molding, on data collected at Sirris. Then what we are building now.</p></div><aside class="notes">20:30. Breathe. Second half: results.</aside>
 </section>
 
 <section class="s">
@@ -366,7 +345,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <div class="banner fragment"><b>The test.</b> Train on four productions, predict the fifth. A new material or a new mold moves every sensor: <em>domain shift</em>.</div>
 <p class="src">Paldino, Caelen, Oueslati, Ansay, Johanesa, Bontempi. <i>PerCom Workshops</i>, 2025, and <i>Future Generation Computer Systems</i>, 2026. Written during my PhD, within ARIAC by DigitalWallonia4.ai. Parts counted after cleaning.</p>
 </div></div>
-<aside class="notes">22:00. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth.</aside>
+<aside class="notes">21:00. Data collected at Sirris. Five productions = five domains. Train on four, predict the fifth.</aside>
 </section>
 
 <section class="s">
@@ -395,7 +374,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <div class="banner fragment">Without being told, the algorithm found <em>4 of the 7</em> expert variables, and proposed the thermal ones.</div>
 </div></div>
-<aside class="notes">23:30. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones.</aside>
+<aside class="notes">22:30. PCMCI on each production, keep what is a cause of the target in all five. It finds 4 of the 7 expert variables on its own, and adds the thermal ones.</aside>
 </section>
 
 <section class="s">
@@ -421,7 +400,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <p class="center fragment" style="margin-top:14px;font-weight:650">A hard task and small differences: the twin is limited by <span class="alert">how well we can find the graph</span>.</p>
 </div></div>
-<aside class="notes">25:00. Be honest: the differences are small. The message is: same accuracy with half of the sensors, chosen without an expert, and naive adaptation hurts. Third card is the bridge to the next part.</aside>
+<aside class="notes">24:00. Be honest: the differences are small. The message is: same accuracy with half of the sensors, chosen without an expert, and naive adaptation hurts. Third card is the bridge to the next part.</aside>
 </section>
 
 <section class="s">
@@ -440,7 +419,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <p class="src">TD2C: Paldino and Bontempi, <i>International Journal of Forecasting</i>, 2026. &nbsp;DTD2C: ongoing work, under review.</p>
 </div></div>
-<aside class="notes">27:30. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems.</aside>
+<aside class="notes">26:30. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems.</aside>
 </section>
 
 <section class="s top">
@@ -457,7 +436,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   </div>
 </div>
 </div></div>
-<aside class="notes">30:00. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
+<aside class="notes">29:00. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
 </section>
 
 <section class="s">
@@ -469,7 +448,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p>The 42 pairs the model scores highest against the 42 true edges: 10 are correct. Of the 32 mistakes, 25 link stations of the same basin on different branches, 4 are reversed and 3 point to an indirect ancestor. <strong>None links unrelated stations.</strong></p>
 
 </div></div>
-<aside class="notes">32:00. Real data, never seen. 10 of 42 right; the mistakes are all inside the same basin. SKIP IF LATE.</aside>
+<aside class="notes">31:00. Real data, never seen. 10 of 42 right; the mistakes are all inside the same basin. SKIP IF LATE.</aside>
 </section>
 
 <section class="s">
@@ -487,7 +466,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <p>Next: statistics that do not blow up on long series, calibration without labels, same-time effects.</p>
 
 </div></div>
-<aside class="notes">33:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases.</aside>
+<aside class="notes">32:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases.</aside>
 </section>
 
 <section class="s top">
@@ -505,7 +484,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <div class="banner fragment">No code, no install, no GPU. <em>Bring a file.</em></div>
 </div></div>
-<aside class="notes">35:00. The tool exists. Offer: send a CSV, or we run it together.</aside>
+<aside class="notes">34:00. The tool exists. Offer: send a CSV, or we run it together.</aside>
 </section>
 
 <section class="s">
@@ -529,7 +508,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <p class="small" style="margin:10px 0 0 0"><b>What we bring:</b> the methods, the tool, the computing, and joint papers and projects, as we did in ARIAC.</p>
 </div>
 </div></div>
-<aside class="notes">36:30. Where each piece sits in a twin. Then the ask, said plainly: datasets with a ground truth (DoE = design of experiments, tagged events, known structure). What we bring in exchange.</aside>
+<aside class="notes">35:30. Where each piece sits in a twin. Then the ask, said plainly: datasets with a ground truth (DoE = design of experiments, tagged events, known structure). What we bring in exchange.</aside>
 </section>
 
 <section class="s">
@@ -542,7 +521,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we look for real datasets with a ground truth.</span></div>
 </div>
 </div></div>
-<aside class="notes">38:00. Four sentences. Stop at 39:00, two minutes of margin.</aside>
+<aside class="notes">37:00. Four sentences. Stop at 38:00, two minutes of margin.</aside>
 </section>
 
 <section class="hero" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="zoom">
@@ -551,7 +530,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="sub" style="margin-bottom:0">Questions, and data, are welcome.</div>
   <div class="meta" style="margin-top:28px">Gian Marco Paldino · Machine Learning Group, Université Libre de Bruxelles</div>
 </div>
-<aside class="notes">39:00. Questions.</aside>
+<aside class="notes">38:00. Questions.</aside>
 </section>
 
 <section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Backup</div><h2>More, if you ask</h2><p class="sub">Slides kept for the discussion.</p></div></section>
@@ -562,6 +541,26 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <div class="rung r3 fragment fade-up" data-fragment-index="1" style="margin-left:220px"><div class="rn">3</div><div class="ri">💭</div><div><div class="rt">Root-cause twin <span>imagining</span></div><div class="rq">What if I had done otherwise?</div></div><div class="rx">This part was scrapped. Would it have been good with another setting?</div><div class="rf"><span class="math inline">P(y_x \mid x', y')</span></div></div><div class="rung r2 fragment fade-up" data-fragment-index="0" style="margin-left:110px"><div class="rn">2</div><div class="ri">✋</div><div><div class="rt">What-if twin <span>doing</span></div><div class="rq">What if I change it?</div></div><div class="rx">Raise the mold temperature by 5 °C: what happens to scrap?</div><div class="rf"><span class="math inline">P(y \mid do(x))</span></div></div><div class="rung r1" style="margin-left:0px"><div class="rn">1</div><div class="ri">👁️</div><div><div class="rt">Monitoring twin <span>seeing</span></div><div class="rq">What will I see next?</div></div><div class="rx">Predict the quality of the next part from the sensors.</div><div class="rf"><span class="math inline">P(y \mid x)</span></div></div>
 <p class="fragment" data-fragment-index="2" style="margin-top:16px">Most data-driven twins live on the first rung. To climb, data are not enough: we need <span class="alert">a causal graph</span>. From physics when we have it, from the data when we do not.</p>
 <p class="tiny muted">Ladder of causation: Pearl and Mackenzie, <i>The Book of Why</i>, 2018.</p>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Why causality?</div><h2>Two different problems: inference and discovery</h2></header>
+<div class="sbody"><div class="fit">
+<div class="grid2">
+  <div class="card t-blue"><span class="tag blue">Causal inference</span><h3 style="margin-top:10px">The graph is given.</h3>
+    <p><i>How much</i> does X change Y?</p>
+    <p class="small muted">Drying time: we knew that moisture was the confounder, and computed the effect of the drying time.</p>
+    <p style="margin:0"><b>Output:</b> a number (an effect).</p></div>
+  <div class="card t-red"><span class="tag red">Causal discovery</span><h3 style="margin-top:10px">The graph is the unknown.</h3>
+    <p><i>What</i> causes what?</p>
+    <p class="small muted">Drying time: who told us that moisture comes before the choice of the drying time, and not after?</p>
+    <p style="margin:0"><b>Output:</b> a graph.</p></div>
+</div>
+<div class="flow">
+  <div class="box">data</div><div class="arrow">discovery</div><div class="box" style="border-color:var(--accent);color:var(--accent)">graph</div><div class="arrow">inference</div><div class="box">effect of an action</div>
+</div>
+<p class="center fragment" style="margin-top:16px">Until now we did inference, with a graph we took for granted. <b>The rest of this talk is about discovery.</b></p>
 </div></div>
 </section>
 

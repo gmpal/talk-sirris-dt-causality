@@ -60,11 +60,6 @@ PLAN = [
     (S.CONFOUNDER, "4:30. Moisture is the confounder: operators dry longer when the granulate is humid. Seeing vs doing is the one concept to keep. This is Simpson's paradox; the textbook case is medical (kidney stones)."),
     (S.SECURITY, "7:00. 45 seconds, for the security team: same structure, other logs. Illustrative example."),
     (S.CATCH, "8:30. DoE = the factory's randomized trial (you ran one for our dataset). Otherwise we adjust, and then we need to know for what: confounder yes, collider no."),
-    (ks("Two different problems", edits=[
-        ("Kidney stones: we knew stone size was the confounder, and computed the effect of the treatment.",
-         "Drying time: we knew that moisture was the confounder, and computed the effect of the drying time."),
-        ("Kidney stones: who told us that stone size comes before treatment, and not after?",
-         "Drying time: who told us that moisture comes before the choice of the drying time, and not after?")]), "10:00. Short. Discovery gives the graph, inference uses it. From here on: discovery. SKIP IF LATE."),
     (ks("Conditioning is also how we find the graph"), "11:00. Four structures, one question asked many times: is X independent of Y given Z?"),
     (ks("Let's discover a graph by hand"), "12:30. Six clicks. In 40 minutes: answer the questions yourself if the room is slow. Must be out by 17:00."),
     (ks("It worked. What did we assume"), "17:00. Four cards, 15 seconds each. SKIP IF LATE."),
@@ -88,6 +83,11 @@ PLAN = [
     # ------------------------------------------------------------------ backup
     (S.DIV_BACKUP, ""),
     (S.DT_LADDER, ""),
+    (ks("Two different problems", edits=[
+        ("Kidney stones: we knew stone size was the confounder, and computed the effect of the treatment.",
+         "Drying time: we knew that moisture was the confounder, and computed the effect of the drying time."),
+        ("Kidney stones: who told us that stone size comes before treatment, and not after?",
+         "Drying time: who told us that moisture comes before the choice of the drying time, and not after?")]), ""),
     (ks("How do we break a spurious correlation", kicker=BK, edits=[
         ("Treatment ← Stone size → Recovery", "Drying time ← Moisture → Good part"),
         (">Stone size</text>", ">Moisture</text>"), (">Treatment</text>", ">Drying time</text>"), (">Recovery</text>", ">Good part</text>"),
@@ -148,7 +148,7 @@ TEMPLATE = """<!doctype html>
 
 # Changes made after the notes were timed: seconds by which every clock time AFTER the slide is shifted.
 # WHO, PROJECTS and SECURITY were added (60, 45 and 45 s); the ladder (90 s) was moved to the backup, it came after SECURITY.
-ADDED = {id(S.WHO): 60, id(S.PROJECTS): 45, id(S.SECURITY): 45 - 90}
+ADDED = {id(S.WHO): 60, id(S.PROJECTS): 45, id(S.SECURITY): 45 - 90, id(S.CATCH): -60}  # inference vs discovery (60 s) also moved to the backup
 
 
 def clock(note, shift):
