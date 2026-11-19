@@ -74,7 +74,6 @@ PLAN = [
     (S.PRETRAINED, "26:30. The weak point above was the discovery algorithm. Our research: replace hundreds of tests with a network trained once on simulated systems."),
     (ks("Result 1: trained up to 40", rename="Trained up to 40 variables, tested up to 1000", kicker=RES),
      "29:00. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160."),
-    (ks("A real case: 42 river stations", kicker=RES), "31:00. Real data, never seen. 10 of 42 right; the mistakes are all inside the same basin. SKIP IF LATE."),
     (ks("Where it breaks, and why", kicker=RES), "32:30. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases."),
     (S.DASHBOARD, "34:00. The tool exists. Offer: send a CSV, or we run it together."),
     (S.DT_LOOP, "35:30. Where each piece sits in a twin. Then the ask, said plainly: datasets with a ground truth (DoE = design of experiments, tagged events, known structure). What we bring in exchange."),
@@ -83,6 +82,7 @@ PLAN = [
     # ------------------------------------------------------------------ backup
     (S.DIV_BACKUP, ""),
     (S.DT_LADDER, ""),
+    (ks("A real case: 42 river stations", kicker=BK), ""),
     (ks("Two different problems", edits=[
         ("Kidney stones: we knew stone size was the confounder, and computed the effect of the treatment.",
          "Drying time: we knew that moisture was the confounder, and computed the effect of the drying time."),
@@ -146,9 +146,16 @@ TEMPLATE = """<!doctype html>
 """
 
 
-# Changes made after the notes were timed: seconds by which every clock time AFTER the slide is shifted.
-# WHO, PROJECTS and SECURITY were added (60, 45 and 45 s); the ladder (90 s) was moved to the backup, it came after SECURITY.
-ADDED = {id(S.WHO): 60, id(S.PROJECTS): 45, id(S.SECURITY): 45 - 90, id(S.CATCH): -60}  # inference vs discovery (60 s) also moved to the backup
+# Changes made after the notes were timed: seconds by which every clock time AFTER the slide with that title is shifted.
+# Added: who is talking (60 s), MLG projects (45 s), security example (45 s).
+# Moved to the backup: the ladder (90 s, came after the security slide), inference vs discovery (60 s), the rivers (90 s).
+SHIFT_AFTER = {
+    "A machine learning lab that builds digital twins": 60,
+    "from the grid to the hand": 45,
+    "The same trap, in security logs": 45 - 90,
+    "Two ways out, and a catch": -60,
+    "Trained up to 40 variables, tested up to 1000": -90,
+}
 
 
 def clock(note, shift):
@@ -162,7 +169,8 @@ def timed(plan):
     shift = 0
     for h, n in plan:
         yield h, clock(n, shift)
-        shift += ADDED.get(id(h), 0)
+        if n:  # backup slides have no note and do not count
+            shift += sum(v for k, v in SHIFT_AFTER.items() if k in h)
 
 
 def with_note(html, note):
