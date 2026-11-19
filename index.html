@@ -461,24 +461,6 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <aside class="notes">30:15. Left: accuracy stays flat far beyond the training sizes. Right (next click or just say it): 7 s at 200 variables, 2 min at 1000; PCMCI+ does not finish at 160.</aside>
 </section>
 
-<section class="s">
-<header><div class="kicker">Pretrained causal discovery</div><h2>Where it breaks, and why</h2></header>
-<div class="sbody"><div class="fit">
-<div class="blk block"><div class="blk-t">1. Real series do not look like simulated ones</div><div class="blk-b">
-<p>Long and strongly autocorrelated: the correlation channels average about 29, against about 0 in training. The network extrapolates. On CausalTime a plain average of its own inputs (0.89) beats the network (0.67).</p>
-</div></div>
-<div class="blk block"><div class="blk-t">2. We threw away something useful</div><div class="blk-b">
-<p>The tensor ignores the scale of the series, by design. But a downstream station carries more water: the ratio of the standard deviations alone reaches 0.76 on the flood network.</p>
-</div></div>
-<div class="blk block"><div class="blk-t">3. A broken assumption</div><div class="blk-b">
-<p>On NetSim the effects happen within one sampling step. We only look at lagged effects.</p>
-</div></div>
-<p>Next: statistics that do not blow up on long series, calibration without labels, same-time effects.</p>
-
-</div></div>
-<aside class="notes">32:15. Say it plainly: on real series it does not yet beat the classics. This is why we want industrial cases.</aside>
-</section>
-
 <section class="s top">
 <header><div class="kicker">From paper to tool</div><h2>Upload a CSV, get the causal graph</h2></header>
 <div class="sbody"><div class="fit">
@@ -494,24 +476,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 </div>
 <div class="banner fragment">No code, no install, no GPU. <em>Bring a file.</em></div>
 </div></div>
-<aside class="notes">33:45. The tool exists. Offer: send a CSV, or we run it together.</aside>
-</section>
-
-<section class="s">
-<header><div class="kicker">Digital twins</div><h2>Where causality sits in the twin</h2></header>
-<div class="sbody"><div class="fit">
-<div class="pipe">
-  <div class="pb"><div class="pi">📡</div><b>Sensor logs</b><span>what the plant already records</span></div><div class="pa">⟶</div>
-  <div class="pb hot"><div class="pi">🕸️</div><b>Causal graph</b><span>discovered from data, corrected by the expert</span></div><div class="pa">⟶</div>
-  <div class="pb wide">
-    <div class="use"><i class="tag green">done</i><b>Robust models</b><span>features that survive a new production</span></div>
-    <div class="use"><i class="tag gold">next</i><b>What-if</b><span>simulate a change of set-point before making it</span></div>
-    <div class="use"><i class="tag gold">next</i><b>Root cause</b><span>explain an alarm to the operator</span></div>
-  </div>
-</div>
-<div class="banner fragment">The graph is discovered from the data and <em>corrected by the expert</em>. We need both.</div>
-</div></div>
-<aside class="notes">35:15. 45 seconds. Where each piece sits in a twin: one done, two next. The ask comes after the take-home.</aside>
+<aside class="notes">32:15. The tool exists. Offer: send a CSV, or we run it together.</aside>
 </section>
 
 <section class="s">
@@ -524,7 +489,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="fragment fade-up"><span><b>Pretrained discovery:</b> any number of sensors, in seconds. Strong on simulated systems, not yet ahead on real ones: we look for real datasets with a ground truth.</span></div>
 </div>
 </div></div>
-<aside class="notes">36:00. Four sentences, then the collaboration slide.</aside>
+<aside class="notes">33:45. Four sentences, then the collaboration slide.</aside>
 </section>
 
 <section class="s">
@@ -545,7 +510,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
     <p class="small" style="margin:.5em 0 0 0">A first test on one of your datasets. Then a master thesis, a PhD, or a joint project, as we did in ARIAC.</p></div></div>
 </div>
 </div></div>
-<aside class="notes">37:00. One minute, said plainly. We look for data (a lot), expert knowledge and a ground truth (DoE = design of experiments). Then what we bring and how to start: a first test on one dataset.</aside>
+<aside class="notes">34:45. One minute, said plainly. We look for data (a lot), expert knowledge and a ground truth (DoE = design of experiments). Then what we bring and how to start: a first test on one dataset.</aside>
 </section>
 
 <section class="hero" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 55%,#5a0f2e 100%)" data-transition="zoom">
@@ -554,7 +519,7 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
   <div class="sub" style="margin-bottom:0">Questions, and data, are welcome.</div>
   <div class="meta" style="margin-top:28px">Gian Marco Paldino · Machine Learning Group, Université Libre de Bruxelles</div>
 </div>
-<aside class="notes">38:00. Questions.</aside>
+<aside class="notes">35:45. Questions.</aside>
 </section>
 
 <section class="divider" data-background-gradient="linear-gradient(125deg,#0b132b 0%,#1c2541 60%,#3b1d5e 100%)" data-transition="zoom-in fade-out"><div class="wrap"><div class="num">Backup</div><h2>More, if you ask</h2><p class="sub">Slides kept for the discussion.</p></div></section>
@@ -565,6 +530,39 @@ A link between <span class="math inline">X</span> yesterday and <span class="mat
 <div class="rung r3 fragment fade-up" data-fragment-index="1" style="margin-left:220px"><div class="rn">3</div><div class="ri">💭</div><div><div class="rt">Root-cause twin <span>imagining</span></div><div class="rq">What if I had done otherwise?</div></div><div class="rx">This part was scrapped. Would it have been good with another setting?</div><div class="rf"><span class="math inline">P(y_x \mid x', y')</span></div></div><div class="rung r2 fragment fade-up" data-fragment-index="0" style="margin-left:110px"><div class="rn">2</div><div class="ri">✋</div><div><div class="rt">What-if twin <span>doing</span></div><div class="rq">What if I change it?</div></div><div class="rx">Raise the mold temperature by 5 °C: what happens to scrap?</div><div class="rf"><span class="math inline">P(y \mid do(x))</span></div></div><div class="rung r1" style="margin-left:0px"><div class="rn">1</div><div class="ri">👁️</div><div><div class="rt">Monitoring twin <span>seeing</span></div><div class="rq">What will I see next?</div></div><div class="rx">Predict the quality of the next part from the sensors.</div><div class="rf"><span class="math inline">P(y \mid x)</span></div></div>
 <p class="fragment" data-fragment-index="2" style="margin-top:16px">Most data-driven twins live on the first rung. To climb, data are not enough: we need <span class="alert">a causal graph</span>. From physics when we have it, from the data when we do not.</p>
 <p class="tiny muted">Ladder of causation: Pearl and Mackenzie, <i>The Book of Why</i>, 2018.</p>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Digital twins</div><h2>Where causality sits in the twin</h2></header>
+<div class="sbody"><div class="fit">
+<div class="pipe">
+  <div class="pb"><div class="pi">📡</div><b>Sensor logs</b><span>what the plant already records</span></div><div class="pa">⟶</div>
+  <div class="pb hot"><div class="pi">🕸️</div><b>Causal graph</b><span>discovered from data, corrected by the expert</span></div><div class="pa">⟶</div>
+  <div class="pb wide">
+    <div class="use"><i class="tag green">done</i><b>Robust models</b><span>features that survive a new production</span></div>
+    <div class="use"><i class="tag gold">next</i><b>What-if</b><span>simulate a change of set-point before making it</span></div>
+    <div class="use"><i class="tag gold">next</i><b>Root cause</b><span>explain an alarm to the operator</span></div>
+  </div>
+</div>
+<div class="banner fragment">The graph is discovered from the data and <em>corrected by the expert</em>. We need both.</div>
+</div></div>
+</section>
+
+<section class="s">
+<header><div class="kicker">Backup</div><h2>Where it breaks, and why</h2></header>
+<div class="sbody"><div class="fit">
+<div class="blk block"><div class="blk-t">1. Real series do not look like simulated ones</div><div class="blk-b">
+<p>Long and strongly autocorrelated: the correlation channels average about 29, against about 0 in training. The network extrapolates. On CausalTime a plain average of its own inputs (0.89) beats the network (0.67).</p>
+</div></div>
+<div class="blk block"><div class="blk-t">2. We threw away something useful</div><div class="blk-b">
+<p>The tensor ignores the scale of the series, by design. But a downstream station carries more water: the ratio of the standard deviations alone reaches 0.76 on the flood network.</p>
+</div></div>
+<div class="blk block"><div class="blk-t">3. A broken assumption</div><div class="blk-b">
+<p>On NetSim the effects happen within one sampling step. We only look at lagged effects.</p>
+</div></div>
+<p>Next: statistics that do not blow up on long series, calibration without labels, same-time effects.</p>
+
 </div></div>
 </section>
 
